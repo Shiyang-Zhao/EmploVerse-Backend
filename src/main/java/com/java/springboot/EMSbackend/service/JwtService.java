@@ -1,0 +1,14 @@
+package com.java.springboot.EMSbackend.service;
+
+import com.java.springboot.EMSbackend.dto.UserDto;
+import com.java.springboot.EMSbackend.model.JwtRequest;
+import com.java.springboot.EMSbackend.model.User;
+
+public interface JwtService {
+
+    User registeUser(UserDto userDto) throws Exception;
+
+    String authenticateUser(JwtRequest authenticationRequest) throws Exception;
+
+    String logoutUser();
+}
