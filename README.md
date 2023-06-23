@@ -21,12 +21,12 @@
 </p>
 
 <p align="center">
-  <a href="#Features">Features</a> •
-  <a href="#Technologies">Technologies</a> •
-  <a href="#Usage">Usage</a> •
-  <a href="#Contributing">Contributing</a> •
-  <a href="#License">License</a> •
-  <a href="#Contact">Contact</a>
+  <a href="#-Features">Features</a> •
+  <a href="#-Technologies">Technologies</a> •
+  <a href="#-Usage">Usage</a> •
+  <a href="#-Contributing">Contributing</a> •
+  <a href="#-License">License</a> •
+  <a href="#-Contact">Contact</a>
 </p>
 
 ---
