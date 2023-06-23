@@ -23,6 +23,8 @@ import com.java.springboot.EMSbackend.model.User;
 import com.java.springboot.EMSbackend.service.JwtService;
 import com.java.springboot.EMSbackend.service.UserService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestController
 @CrossOrigin(origins = { "http://localhost:3000",
 		"http://emploverse-frontend.herokuapp.com/" }, allowCredentials = "true")
@@ -48,8 +50,8 @@ public class UserController {
 	}
 
 	@PostMapping("/logout")
-	public ResponseEntity<String> logout() {
-		jwtService.logoutUser();
+	public ResponseEntity<String> logout(HttpServletRequest request) {
+		jwtService.logoutUser(request);
 		return ResponseEntity.ok("User is logged out successfully!");
 	}
 

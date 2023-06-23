@@ -20,6 +20,8 @@ import com.java.springboot.EMSbackend.model.JwtRequest;
 import com.java.springboot.EMSbackend.model.User;
 import com.java.springboot.EMSbackend.repository.UserRepository;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Service
 public class JwtServiceImplementation implements JwtService {
 
@@ -82,9 +84,16 @@ public class JwtServiceImplementation implements JwtService {
     }
 
     @Override
-    public String logoutUser() {
-        
+    public String logoutUser(HttpServletRequest request) {
+        final String requestTokenHeader = request.getHeader("Authorization");
 
+        String jwtToken = null;
+        // JWT Token is in the form "Bearer token". Remove Bearer word and get only the
+        // Token
+        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
+            jwtToken = requestTokenHeader.substring(7);
+        }
+        jwtTokenUtil.blacklistToken(jwtToken);
         return "Logged out successfully";
     }
 }

@@ -47,7 +47,8 @@ public class SecurityConfiguration {
                 .csrf().disable()
                 .cors().and()
                 // dont authenticate this particular request
-                .authorizeHttpRequests().requestMatchers("/user/authenticate", "/user/register").permitAll()
+                .authorizeHttpRequests().requestMatchers("/user/authenticate", "/user/register", "user/logout")
+                .permitAll()
                 .requestMatchers(HttpMethod.GET, "/employees").hasAnyRole("ADMIN", "MANAGER", "USER")
                 .requestMatchers(HttpMethod.POST, "/employees").hasAnyRole("ADMIN", "MANAGER")
                 // all other requests need to be authenticated
