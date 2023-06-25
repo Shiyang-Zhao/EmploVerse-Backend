@@ -45,7 +45,6 @@ public class UserController {
 	@PostMapping("/authenticate")
 	public ResponseEntity<?> authenticate(@RequestBody JwtRequest authenticationRequest) throws Exception {
 		String token = jwtService.authenticateUser(authenticationRequest);
-
 		return ResponseEntity.ok(new JwtResponse(token, authenticationRequest.getRoles()));
 	}
 

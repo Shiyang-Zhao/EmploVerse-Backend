@@ -10,6 +10,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -85,15 +86,13 @@ public class JwtServiceImplementation implements JwtService {
 
     @Override
     public String logoutUser(HttpServletRequest request) {
+        SecurityContextHolder.clearContext();
         final String requestTokenHeader = request.getHeader("Authorization");
 
         String jwtToken = null;
-        // JWT Token is in the form "Bearer token". Remove Bearer word and get only the
-        // Token
-        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-            jwtToken = requestTokenHeader.substring(7);
-        }
+        jwtToken = requestTokenHeader.substring(7);
         jwtTokenUtil.blacklistToken(jwtToken);
+
         return "Logged out successfully";
     }
 }

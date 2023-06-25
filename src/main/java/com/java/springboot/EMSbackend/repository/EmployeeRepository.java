@@ -11,5 +11,5 @@ import com.java.springboot.EMSbackend.model.Employee;
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     Optional<Employee> findByEmail(String email);
 
-    long deleteByEmail(String email);
+    void deleteByEmail(String email);
 }

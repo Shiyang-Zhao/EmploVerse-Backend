@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -21,7 +22,7 @@ public class JwtTokenUtil implements Serializable {
 
 	private static final long serialVersionUID = -2550185165626007488L;
 
-	public static final long JWT_TOKEN_VALIDITY = 60 * 60;
+	public static final long JWT_TOKEN_VALIDITY = 60;
 
 	private Set<String> blacklistedTokens = new HashSet<>();
 
@@ -50,8 +51,13 @@ public class JwtTokenUtil implements Serializable {
 	}
 
 	private Boolean isTokenExpired(String token) {
-		final Date expiration = getExpirationDateFromToken(token);
-		return expiration.before(new Date());
+		try {
+			final Date expiration = getExpirationDateFromToken(token);
+			return expiration.before(new Date());
+		} catch (ExpiredJwtException e) {
+			// Token has expired
+			return true;
+		}
 	}
 
 	private Boolean ignoreTokenExpiration(String token) {
@@ -71,7 +77,7 @@ public class JwtTokenUtil implements Serializable {
 				.setClaims(claims)
 				.setSubject(subject)
 				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + 5 * JWT_TOKEN_VALIDITY * 1000))
+				.setExpiration(new Date(System.currentTimeMillis() + 30 * JWT_TOKEN_VALIDITY * 1000))
 				.signWith(SignatureAlgorithm.HS512, secret)
 				.compact();
 	}

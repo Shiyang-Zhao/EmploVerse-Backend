@@ -47,12 +47,13 @@ public class SecurityConfiguration {
                 .csrf().disable()
                 .cors().and()
                 // dont authenticate this particular request
-                .authorizeHttpRequests().requestMatchers("/user/authenticate", "/user/register", "user/logout")
+                .authorizeHttpRequests().requestMatchers( "/user/register", "/user/authenticate", "/user/logout")
                 .permitAll()
                 .requestMatchers(HttpMethod.GET, "/employees").hasAnyRole("ADMIN", "MANAGER", "USER")
                 .requestMatchers(HttpMethod.POST, "/employees").hasAnyRole("ADMIN", "MANAGER")
                 // all other requests need to be authenticated
                 .anyRequest().authenticated().and()
+
                 // make sure we use stateless session; session won't be used to
                 // store user's state.
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
