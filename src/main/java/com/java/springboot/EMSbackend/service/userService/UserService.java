@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.java.springboot.EMSbackend.dto.UserDto;
+import com.java.springboot.EMSbackend.dto.UserDto.UserDto;
 import com.java.springboot.EMSbackend.model.userModel.User;
 
 public interface UserService {

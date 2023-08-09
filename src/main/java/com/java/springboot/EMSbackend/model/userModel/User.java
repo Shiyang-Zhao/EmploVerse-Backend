@@ -12,7 +12,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Index;
@@ -69,35 +68,45 @@ public class User {
 	@Column(name = "phone_number")
 	private String phoneNumber;
 
-	@Lob
 	@NotNull
-	@Size(max = 5242880)
-	@Pattern(regexp = "(image/jpeg|image/png)")
-	@Column(name = "profile_image")
-	private byte[] profileImage;
+	@Column(name = "profile_image_path")
+	private String profileImagePath;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@NotEmpty
 	@JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
 	private List<Role> roles = new ArrayList<>();
 
-	// @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	// @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade =
+	// CascadeType.ALL)
 	// @NotNull
 	// private Employee employee;
 
 	// Constructors
 	public User() {
+		
 	}
 
 	public User(String firstName, String lastName, String username, String email, String password,
-			String phoneNumber, byte[] profileImage, List<Role> roles) {
+			String phoneNumber, List<Role> roles) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.username = username;
 		this.email = email;
 		this.password = password;
 		this.phoneNumber = phoneNumber;
-		this.profileImage = profileImage;
+		this.roles = roles;
+	}
+
+	public User(String firstName, String lastName, String username, String email, String password,
+			String phoneNumber, String profileImagePath, List<Role> roles) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.username = username;
+		this.email = email;
+		this.password = password;
+		this.phoneNumber = phoneNumber;
+		this.profileImagePath = profileImagePath;
 		this.roles = roles;
 	}
 
@@ -131,8 +140,8 @@ public class User {
 		return phoneNumber;
 	}
 
-	public byte[] getProfileImage() {
-		return profileImage;
+	public String getProfileImagePath() {
+		return profileImagePath;
 	}
 
 	public List<Role> getRoles() {
@@ -164,8 +173,8 @@ public class User {
 		this.phoneNumber = phoneNumber;
 	}
 
-	public void setProfileImage(byte[] profileImage) {
-		this.profileImage = profileImage;
+	public void setProfileImagePath(String profileImagePath) {
+		this.profileImagePath = profileImagePath;
 	}
 
 	public void setRoles(List<Role> roles) {

@@ -1,17 +1,20 @@
-package com.java.springboot.EMSbackend.dto;
+package com.java.springboot.EMSbackend.dto.UserDto;
 
 import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import com.java.springboot.EMSbackend.model.userModel.Role;
 
 public class UserDto {
+	// private long id;
 	private String firstName;
 	private String lastName;
 	private String username;
 	private String email;
 	private String password;
 	private String phoneNumber;
-	private byte[] profileImage;
+	private MultipartFile profileImage;
 	private List<Role> roles;
 
 	public UserDto() {
@@ -20,7 +23,7 @@ public class UserDto {
 
 	// Constructor
 	public UserDto(String firstName, String lastName, String username, String email, String password,
-			String phoneNumber, byte[] profileImage, List<Role> roles) {
+			String phoneNumber, MultipartFile profileImage, List<Role> roles) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.username = username;
@@ -31,7 +34,24 @@ public class UserDto {
 		this.roles = roles;
 	}
 
+	// public UserDto(long id, String firstName, String lastName, String username, String email, String password,
+	// 		String phoneNumber, MultipartFile profileImage, List<Role> roles) {
+	// 	this.id = id;
+	// 	this.firstName = firstName;
+	// 	this.lastName = lastName;
+	// 	this.username = username;
+	// 	this.email = email;
+	// 	this.password = password;
+	// 	this.phoneNumber = phoneNumber;
+	// 	this.profileImage = profileImage;
+	// 	this.roles = roles;
+	// }
+
 	// Getters
+	// public long getId() {
+	// 	return id;
+	// }
+
 	public String getFirstName() {
 		return firstName;
 	}
@@ -56,7 +76,7 @@ public class UserDto {
 		return phoneNumber;
 	}
 
-	public byte[] getProfileImage() {
+	public MultipartFile getProfileImage() {
 		return profileImage;
 	}
 
@@ -65,6 +85,10 @@ public class UserDto {
 	}
 
 	// Setters
+	// public void setId(long id) {
+	// 	this.id = id;
+	// }
+
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
@@ -89,7 +113,7 @@ public class UserDto {
 		this.phoneNumber = phoneNumber;
 	}
 
-	public void setProfileImage(byte[] profileImage) {
+	public void setProfileImage(MultipartFile profileImage) {
 		this.profileImage = profileImage;
 	}
 

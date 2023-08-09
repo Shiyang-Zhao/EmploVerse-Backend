@@ -62,8 +62,9 @@ public class EmployeeInfo {
     public EmployeeInfo() {
     }
 
-    public EmployeeInfo(LocalDate startDate, LocalDate endDate, String department, String manager,
-            String jobTitles, String workLocation, String workSchedule, String status) {
+    public EmployeeInfo(LocalDate startDate, LocalDate endDate, String department,
+            String manager, String jobTitles, String workLocation,
+            String workSchedule, String status, SalaryInfo salaryInfo) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.department = department;
@@ -72,6 +73,7 @@ public class EmployeeInfo {
         this.workLocation = workLocation;
         this.workSchedule = workSchedule;
         this.status = status;
+        this.salaryInfo = salaryInfo;
     }
 
     // Getters and Setters
@@ -141,5 +143,13 @@ public class EmployeeInfo {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public SalaryInfo getSalaryInfo() {
+        return salaryInfo;
+    }
+
+    public void setSalaryInfo(SalaryInfo salaryInfo) {
+        this.salaryInfo = salaryInfo;
     }
 }

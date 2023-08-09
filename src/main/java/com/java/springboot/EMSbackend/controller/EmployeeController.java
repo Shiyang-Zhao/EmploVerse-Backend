@@ -1,5 +1,6 @@
 package com.java.springboot.EMSbackend.controller;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.java.springboot.EMSbackend.dto.EmployeeDto;
+import com.java.springboot.EMSbackend.dto.EmployeeDto.EmployeeDto;
+import com.java.springboot.EMSbackend.dto.EmployeeDto.SalaryDto;
 import com.java.springboot.EMSbackend.model.employeeModel.Employee;
 import com.java.springboot.EMSbackend.service.employeeService.EmployeeService;
 
@@ -114,7 +116,7 @@ public class EmployeeController {
 		response.put("sortField", sortField);
 		response.put("sortDir", sortDir);
 		response.put("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
-		response.put("listEmployees", page.getContent());
+		response.put("employeeList", page.getContent());
 
 		return ResponseEntity.ok(response);
 	}
@@ -126,5 +128,14 @@ public class EmployeeController {
 			@RequestParam(value = "searchField", required = false, defaultValue = "id") String searchField) {
 		List<Employee> searchResult = employeeService.searchEmployees(keyword, searchField);
 		return ResponseEntity.ok(searchResult);
+	}
+
+	@GetMapping("/setNetSalaryById/{id}")
+	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+	public ResponseEntity<String> getEmployeeNetSalaryById(@PathVariable(value = "id") long id,
+			@RequestBody SalaryDto salaryDto) {
+		BigDecimal netSalary = employeeService.setNetSalaryById(id, salaryDto);
+		String responseMessage = String.format("Salary of employee with id %d: $%f", id, netSalary);
+		return ResponseEntity.ok(responseMessage);
 	}
 }

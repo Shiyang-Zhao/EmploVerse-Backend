@@ -22,7 +22,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.java.springboot.EMSbackend.dto.UserDto;
+import com.java.springboot.EMSbackend.dto.UserDto.UserDto;
 import com.java.springboot.EMSbackend.model.userModel.User;
 import com.java.springboot.EMSbackend.repository.UserRepository;
 
@@ -82,7 +82,6 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 			user.setEmail((userDto.getEmail()));
 			user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 			user.setPhoneNumber(userDto.getPhoneNumber());
-			user.setProfileImage(userDto.getProfileImage());
 			user.setRoles(userDto.getRoles());
 			userRepository.save(user);
 		} catch (Exception e) {

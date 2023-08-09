@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,9 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.java.springboot.EMSbackend.dto.UserDto;
-import com.java.springboot.EMSbackend.model.jwtModel.JwtRequest;
-import com.java.springboot.EMSbackend.model.jwtModel.JwtResponse;
+import com.java.springboot.EMSbackend.dto.UserDto.UserDto;
+import com.java.springboot.EMSbackend.model.userModel.JwtRequest;
+import com.java.springboot.EMSbackend.model.userModel.JwtResponse;
 import com.java.springboot.EMSbackend.model.userModel.User;
 import com.java.springboot.EMSbackend.service.userService.JwtService;
 import com.java.springboot.EMSbackend.service.userService.UserService;
@@ -44,7 +45,7 @@ public class UserController {
 	// Admin or Manager rigister for employees and provide login info to employees
 	@PostMapping("/register")
 	// @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-	public ResponseEntity<?> register(@RequestBody UserDto userDto) throws Exception {
+	public ResponseEntity<?> register(@ModelAttribute UserDto userDto) throws Exception {
 		return ResponseEntity.ok(jwtService.registeUser(userDto));
 	}
 
@@ -54,13 +55,15 @@ public class UserController {
 	public ResponseEntity<?> authenticate(@RequestBody JwtRequest authenticationRequest) throws Exception {
 		String token = jwtService.authenticateUser(authenticationRequest);
 		long id = userService.getUserByUsername(authenticationRequest.getUsername()).getId();
+		String email = userService.getUserByUsername(authenticationRequest.getUsername()).getEmail();
 		return ResponseEntity
-				.ok(new JwtResponse(id, authenticationRequest.getUsername(), token, authenticationRequest.getRoles()));
+				.ok(new JwtResponse(id, authenticationRequest.getUsername(), email, token,
+						authenticationRequest.getRoles()));
 	}
 
 	// Only authenticated accounts can log out
 	@PostMapping("/logout")
-	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+	// @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
 	public ResponseEntity<String> logout(HttpServletRequest request) {
 		jwtService.logoutUser(request);
 		return ResponseEntity.ok("User is logged out successfully!");
@@ -173,15 +176,15 @@ public class UserController {
 		return ResponseEntity.ok(searchResult);
 	}
 
-	@PostMapping("/getCurrentUser")
-	@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+	@GetMapping("/getCurrentUser")
+	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
 	public ResponseEntity<User> getCurrentUser() {
 		User user = userService.getCurrentUser();
 		return ResponseEntity.ok(user);
 	}
 
 	@PostMapping("/updateCurrentUser")
-	@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
 	public ResponseEntity<String> updateCurrentUser(@RequestBody UserDto userDto) {
 		updateCurrentUser(userDto);
 		return ResponseEntity.ok("Current user is updated successfully!!!");

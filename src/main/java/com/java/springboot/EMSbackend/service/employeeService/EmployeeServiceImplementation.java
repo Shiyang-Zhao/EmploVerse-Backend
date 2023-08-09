@@ -1,5 +1,6 @@
 package com.java.springboot.EMSbackend.service.employeeService;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,14 +17,17 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.java.springboot.EMSbackend.dto.EmployeeDto;
+import com.java.springboot.EMSbackend.dto.EmployeeDto.EmployeeDto;
+import com.java.springboot.EMSbackend.dto.EmployeeDto.SalaryDto;
 import com.java.springboot.EMSbackend.model.employeeModel.Employee;
+import com.java.springboot.EMSbackend.model.employeeModel.SalaryInfo;
 import com.java.springboot.EMSbackend.repository.EmployeeRepository;
 
 @Service
 public class EmployeeServiceImplementation implements EmployeeService {
 
 	private final BCryptPasswordEncoder passwordEncoder;
+
 	private final EmployeeRepository employeeRepository;
 
 	@Autowired
@@ -40,14 +44,9 @@ public class EmployeeServiceImplementation implements EmployeeService {
 	@Override
 	public void createEmployee(EmployeeDto employeeDto) {
 		try {
-			Employee newEmployee = new Employee(employeeDto.getUser(), passwordEncoder.encode(employeeDto.getSsn()),
-					employeeDto.getBirthday(),
-					employeeDto.getAddress1(), employeeDto.getAddress2(), employeeDto.getCity(), employeeDto.getState(),
-					employeeDto.getZipCode(), employeeDto.getCountry(), employeeDto.getCompany(),
-					employeeDto.getStartDate(), employeeDto.getEndDate(), employeeDto.getDepartment(),
-					employeeDto.getSupervisor(), employeeDto.getJobTitles(), employeeDto.getWorkSchedule(),
-					employeeDto.getStatus(), employeeDto.getUniversity(), employeeDto.getDegree(),
-					employeeDto.getMajor());
+			employeeDto.getPersonalInfo().setSsn(passwordEncoder.encode(employeeDto.getPersonalInfo().getSsn()));
+			Employee newEmployee = new Employee(employeeDto.getUser(), employeeDto.getPersonalInfo(),
+					employeeDto.getEmployeeInfo(), employeeDto.getEducationInfo());
 			employeeRepository.save(newEmployee);
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to save employee: " + e.getMessage());
@@ -62,26 +61,11 @@ public class EmployeeServiceImplementation implements EmployeeService {
 
 	private void updateEmployee(Employee employee, EmployeeDto employeeDto) {
 		try {
+			employeeDto.getPersonalInfo().setSsn(passwordEncoder.encode(employeeDto.getPersonalInfo().getSsn()));
 			employee.setUser(employeeDto.getUser());
-			employee.setSsn(passwordEncoder.encode(employeeDto.getSsn()));
-			employee.setBirthday(employeeDto.getBirthday());
-			employee.setAddress1(employeeDto.getAddress1());
-			employee.setAddress2(employeeDto.getAddress2());
-			employee.setCity(employeeDto.getCity());
-			employee.setState(employeeDto.getState());
-			employee.setZipCode(employeeDto.getZipCode());
-			employee.setCountry(employeeDto.getCountry());
-			employee.setCompany(employeeDto.getCompany());
-			employee.setStartDate(employeeDto.getStartDate());
-			employee.setEndDate(employeeDto.getEndDate());
-			employee.setDepartment(employeeDto.getDepartment());
-			employee.setSupervisor(employeeDto.getSupervisor());
-			employee.setJobTitles(employeeDto.getJobTitles());
-			employee.setWorkSchedule(employeeDto.getWorkSchedule());
-			employee.setStatus(employeeDto.getStatus());
-			employee.setUniversity(employeeDto.getUniversity());
-			employee.setDegree(employeeDto.getDegree());
-			employee.setMajor(employeeDto.getMajor());
+			employee.setPersonalInfo(employeeDto.getPersonalInfo());
+			employee.setEmployeeInfo(employeeDto.getEmployeeInfo());
+			employee.setEducationInfo(employeeDto.getEducationInfo());
 			employeeRepository.save(employee);
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to update employee: " + e.getMessage());
@@ -130,9 +114,9 @@ public class EmployeeServiceImplementation implements EmployeeService {
 		fieldToGetterMap.put("username", employee -> employee.getUser().getUsername());
 		fieldToGetterMap.put("email", employee -> employee.getUser().getEmail());
 		fieldToGetterMap.put("phoneNumber", employee -> employee.getUser().getPhoneNumber());
-		fieldToGetterMap.put("jobTitles", employee -> employee.getJobTitles());
-		fieldToGetterMap.put("department", employee -> employee.getDepartment());
-		fieldToGetterMap.put("supervisor", employee -> employee.getSupervisor());
+		fieldToGetterMap.put("jobTitles", employee -> employee.getEmployeeInfo().getJobTitles());
+		fieldToGetterMap.put("department", employee -> employee.getEmployeeInfo().getDepartment());
+		fieldToGetterMap.put("manager", employee -> employee.getEmployeeInfo().getManager());
 
 		return fieldToGetterMap.get(searchField);
 	}
@@ -170,24 +154,61 @@ public class EmployeeServiceImplementation implements EmployeeService {
 	}
 
 	// @Override
-	// public List<Employee> sortEmployees(List<Employee> employees, String sortField, String sortDir) {
-	// 	try {
-	// 		Function<Employee, String> getter = createFieldToGetterMap(sortField);
-	// 		if (getter == null) {
-	// 			throw new IllegalArgumentException("Invalid sortField: " + sortField);
-	// 		}
-
-	// 		Comparator<Employee> comparator = Comparator.comparing(getter);
-	// 		if (sortDir.equalsIgnoreCase("desc")) {
-	// 			comparator = comparator.reversed();
-	// 		}
-
-	// 		return employees.stream()
-	// 				.sorted(comparator)
-	// 				.collect(Collectors.toList());
-	// 	} catch (Exception e) {
-	// 		throw new RuntimeException("Failed to sort employees: " + e.getMessage());
-	// 	}
+	// public List<Employee> sortEmployees(List<Employee> employees, String
+	// sortField, String sortDir) {
+	// try {
+	// Function<Employee, String> getter = createFieldToGetterMap(sortField);
+	// if (getter == null) {
+	// throw new IllegalArgumentException("Invalid sortField: " + sortField);
 	// }
+
+	// Comparator<Employee> comparator = Comparator.comparing(getter);
+	// if (sortDir.equalsIgnoreCase("desc")) {
+	// comparator = comparator.reversed();
+	// }
+
+	// return employees.stream()
+	// .sorted(comparator)
+	// .collect(Collectors.toList());
+	// } catch (Exception e) {
+	// throw new RuntimeException("Failed to sort employees: " + e.getMessage());
+	// }
+	// }
+
+	public void setSalaryDetails(SalaryInfo salaryInfo, SalaryDto salaryDto) {
+		salaryInfo.setAmount(salaryDto.getAmount());
+		salaryInfo.setPayFrequency(salaryDto.getPayFrequency());
+		salaryInfo.setBonus(salaryDto.getBonus());
+		salaryInfo.setTaxDeduction(salaryDto.getTaxDeduction());
+		salaryInfo.setOvertimeHours(salaryDto.getOvertimeHours());
+		salaryInfo.setOvertimeRate(salaryDto.getOvertimeRate());
+		salaryInfo.setDeductions(salaryDto.getDeductions());
+		salaryInfo.setInsuranceCoverage(salaryDto.getInsuranceCoverage());
+	}
+
+	@Override
+	public BigDecimal setNetSalaryById(long id, SalaryDto salaryDto) {
+		Employee employee = getEmployeeById(id);
+		SalaryInfo salaryInfo = employee.getEmployeeInfo().getSalaryInfo();
+		setSalaryDetails(salaryInfo, salaryDto);
+		// Set the values from the SalaryDTO to the SalaryInfo object
+
+		BigDecimal baseSalary = salaryInfo.getAmount();
+		BigDecimal bonusAmount = salaryInfo.getBonus();
+		BigDecimal taxDeductionAmount = salaryInfo.getTaxDeduction();
+		double overtimeHours = salaryInfo.getOvertimeHours();
+		double overtimeRate = salaryInfo.getOvertimeRate();
+
+		// Calculate overtime pay
+		BigDecimal overtimePay = BigDecimal.valueOf(overtimeHours * overtimeRate);
+
+		// Calculate gross salary
+		BigDecimal grossSalary = baseSalary.add(bonusAmount).add(overtimePay);
+
+		// Calculate net salary after tax deductions
+		BigDecimal netSalary = grossSalary.subtract(taxDeductionAmount);
+
+		return netSalary;
+	}
 
 }
