@@ -1,6 +1,5 @@
 package com.java.springboot.EMSbackend.service.userService;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
@@ -10,8 +9,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
-
-import javax.imageio.ImageIO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -39,8 +36,6 @@ import jakarta.servlet.http.HttpServletRequest;
 public class JwtServiceImplementation implements JwtService {
 
     // Define the base directory to store profile images
-    private static final String BASE_PROFILE_IMAGE_DIR = "C:/Users/shiya/Downloads/Projects/EmploVerse/EmploVerse-Frontend/src/media/profileImages";
-    private static final String DEFAULT_PROFILE_IMAGE_PATH = "C:/Users/shiya/Downloads/Projects/EmploVerse/EmploVerse-Frontend/src/media/profileImages/defaultProfileImage.jpg";
 
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtTokenUtil jwtTokenUtil;
@@ -66,9 +61,9 @@ public class JwtServiceImplementation implements JwtService {
     @Override
     public User registeUser(UserDto userDto) throws Exception {
         try {
-            String profileImagePath = DEFAULT_PROFILE_IMAGE_PATH;
+            String profileImagePath = UserService.DEFAULT_PROFILE_IMAGE_PATH;
             // Create a subdirectory for the user based on their ID or username
-            String userSubdirectory = BASE_PROFILE_IMAGE_DIR + "/" + userDto.getUsername();
+            String userSubdirectory = UserService.BASE_PROFILE_IMAGE_DIR + "/" + userDto.getUsername();
             File directory = new File(userSubdirectory);
             if (!directory.exists()) {
                 directory.mkdirs();
@@ -100,12 +95,16 @@ public class JwtServiceImplementation implements JwtService {
                 // ImageIO.write(bufferedImage, fileExtension, imageFile);
             }
 
-            User newUser = new User(userDto.getFirstName(), userDto.getLastName(), userDto.getUsername(),
-                    userDto.getEmail(),
-                    passwordEncoder.encode(userDto.getPassword()), userDto.getPhoneNumber(), profileImagePath,
-                    userDto.getRoles());
-            userRepository.save(newUser);
-            return newUser;
+            if (userDto.getPassword1().equals(userDto.getPassword2())) {
+                User newUser = new User(userDto.getFirstName(), userDto.getLastName(), userDto.getUsername(),
+                        userDto.getEmail(),
+                        passwordEncoder.encode(userDto.getPassword1()), userDto.getPhoneNumber(), profileImagePath,
+                        userDto.getRoles());
+                userRepository.save(newUser);
+                return newUser;
+            } else {
+                throw new IllegalArgumentException("Passwords do not match");
+            }
         } catch (Exception e) {
             throw new RuntimeException("Failed to create a new user: " + e.getMessage());
         }
@@ -114,7 +113,7 @@ public class JwtServiceImplementation implements JwtService {
     @Override
     public String authenticateUser(JwtRequest authenticationRequest) throws Exception {
         try {
-            UserDetails userDetails = userService.loadUserByUsername(authenticationRequest.getUsername());
+            UserDetails userDetails = userService.loadUserByUsername(authenticationRequest.getUsernameOrEmail());
             // Assuming the roles in JwtRequest are simple strings (not GrantedAuthority
             // objects).
             // Check if all required roles are present in the user's authorities.
@@ -135,12 +134,12 @@ public class JwtServiceImplementation implements JwtService {
             }
 
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                    authenticationRequest.getUsername(),
+                    authenticationRequest.getUsernameOrEmail(),
                     authenticationRequest.getPassword(),
                     authorities // Pass the authorities directly here
             ));
-
-            final String token = jwtTokenUtil.generateToken(userDetails);
+            String authMethod = authenticationRequest.getUsernameOrEmail().contains("@") ? "email" : "username";
+            final String token = jwtTokenUtil.generateToken(userDetails, authMethod, authorities);
             return token;
         } catch (DisabledException e) {
             throw new Exception("USER_DISABLED", e);

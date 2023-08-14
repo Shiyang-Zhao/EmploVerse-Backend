@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.java.springboot.EMSbackend.dto.UserDto.UserDto;
 import com.java.springboot.EMSbackend.model.userModel.JwtRequest;
@@ -54,11 +55,15 @@ public class UserController {
 	// @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
 	public ResponseEntity<?> authenticate(@RequestBody JwtRequest authenticationRequest) throws Exception {
 		String token = jwtService.authenticateUser(authenticationRequest);
-		long id = userService.getUserByUsername(authenticationRequest.getUsername()).getId();
-		String email = userService.getUserByUsername(authenticationRequest.getUsername()).getEmail();
+		// long id =
+		// userService.getUserByUsernameOrEmail(authenticationRequest.getUsernameOrEmail()).getId();
+		// String username =
+		// userService.getUserByUsernameOrEmail(authenticationRequest.getUsernameOrEmail())
+		// .getUsername();
+		// String email =
+		// userService.getUserByUsernameOrEmail(authenticationRequest.getUsernameOrEmail()).getEmail();
 		return ResponseEntity
-				.ok(new JwtResponse(id, authenticationRequest.getUsername(), email, token,
-						authenticationRequest.getRoles()));
+				.ok(new JwtResponse(token, authenticationRequest.getRoles()));
 	}
 
 	// Only authenticated accounts can log out
@@ -186,7 +191,28 @@ public class UserController {
 	@PostMapping("/updateCurrentUser")
 	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
 	public ResponseEntity<String> updateCurrentUser(@RequestBody UserDto userDto) {
-		updateCurrentUser(userDto);
+		userService.updateCurrentUser(userDto);
 		return ResponseEntity.ok("Current user is updated successfully!!!");
+	}
+
+	@PostMapping("/addCurrentUserToEmployee")
+	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+	public ResponseEntity<String> addCurrentUserToEmployees() {
+		userService.addCurrentUserToEmployees();
+		return ResponseEntity.ok("Current user is added successfully!!!");
+	}
+
+	@PostMapping("/updateCurrentUserPassword")
+	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+	public ResponseEntity<String> updateCurrentUserPassword(@RequestParam String newPassword) {
+		userService.updateCurrentUserPassword(newPassword);
+		return ResponseEntity.ok("Password is chanegd successfully!!!");
+	}
+
+	@PostMapping("/updateCurrentUserProfileIamge")
+	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+	public ResponseEntity<String> updateCurrentUserProfileIamge(@RequestParam MultipartFile newProfileImage) {
+		userService.updateCurrentUserProfileIamge(newProfileImage);
+		return ResponseEntity.ok("Profile image is updated successfully!!!");
 	}
 }

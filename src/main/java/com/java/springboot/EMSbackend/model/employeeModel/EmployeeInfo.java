@@ -31,6 +31,10 @@ public class EmployeeInfo {
     private LocalDate endDate;
 
     @NotNull
+    @Column(name = "employment_type")
+    private String employmentType;
+
+    @NotNull
     @Column(name = "department")
     private String department;
 
@@ -60,13 +64,24 @@ public class EmployeeInfo {
 
     // Constructors
     public EmployeeInfo() {
+        this.startDate = LocalDate.now();
+        this.endDate = LocalDate.now();
+        this.employmentType = "N/A";
+        this.department = "N/A";
+        this.manager = "N/A";
+        this.jobTitles = "N/A";
+        this.workLocation = "N/A";
+        this.workSchedule = "N/A";
+        this.status = "N/A";
+        this.salaryInfo = new SalaryInfo();
     }
 
-    public EmployeeInfo(LocalDate startDate, LocalDate endDate, String department,
+    public EmployeeInfo(LocalDate startDate, LocalDate endDate, String employmentType, String department,
             String manager, String jobTitles, String workLocation,
             String workSchedule, String status, SalaryInfo salaryInfo) {
         this.startDate = startDate;
         this.endDate = endDate;
+        this.employmentType = employmentType;
         this.department = department;
         this.manager = manager;
         this.jobTitles = jobTitles;
@@ -95,6 +110,14 @@ public class EmployeeInfo {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+    }
+
+    public String getEmploymentType() {
+        return employmentType;
+    }
+
+    public void setEmploymentType(String employmentType) {
+        this.employmentType = employmentType;
     }
 
     public String getDepartment() {

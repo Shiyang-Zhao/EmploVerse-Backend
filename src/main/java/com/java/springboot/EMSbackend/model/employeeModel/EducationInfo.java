@@ -29,14 +29,23 @@ public class EducationInfo {
     @Column(name = "major")
     private String major;
 
+    @NotNull
+    @Column(name = "gpa")
+    private String gpa;
+
     // Constructors
     public EducationInfo() {
+        this.university = "N/A";
+        this.degree = "N/A";
+        this.major = "N/A";
+        this.gpa = "N/A";
     }
 
-    public EducationInfo(String university, String degree, String major) {
+    public EducationInfo(String university, String degree, String major, String gpa) {
         this.university = university;
         this.degree = degree;
         this.major = major;
+        this.gpa = gpa;
     }
 
     // Getters and Setters
@@ -66,5 +75,13 @@ public class EducationInfo {
 
     public void setMajor(String major) {
         this.major = major;
+    }
+
+    public String getGpa() {
+        return gpa;
+    }
+
+    public void setGpa(String gpa) {
+        this.gpa = gpa;
     }
 }

@@ -48,7 +48,7 @@ public class User {
 	private String lastName;
 
 	@NotBlank
-	@Pattern(regexp = "^[a-zA-Z0-9]{5,15}$")
+	@Pattern(regexp = "^[A-Za-z][A-Za-z0-9_-]{6,20}$")
 	@Column(name = "username")
 	private String username;
 
@@ -69,8 +69,8 @@ public class User {
 	private String phoneNumber;
 
 	@NotNull
-	@Column(name = "profile_image_path")
-	private String profileImagePath;
+	@Column(name = "profile_image")
+	private String profileImage;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@NotEmpty
@@ -84,29 +84,18 @@ public class User {
 
 	// Constructors
 	public User() {
-		
+
 	}
 
 	public User(String firstName, String lastName, String username, String email, String password,
-			String phoneNumber, List<Role> roles) {
+			String phoneNumber, String profileImage, List<Role> roles) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.username = username;
 		this.email = email;
 		this.password = password;
 		this.phoneNumber = phoneNumber;
-		this.roles = roles;
-	}
-
-	public User(String firstName, String lastName, String username, String email, String password,
-			String phoneNumber, String profileImagePath, List<Role> roles) {
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.username = username;
-		this.email = email;
-		this.password = password;
-		this.phoneNumber = phoneNumber;
-		this.profileImagePath = profileImagePath;
+		this.profileImage = profileImage;
 		this.roles = roles;
 	}
 
@@ -140,8 +129,8 @@ public class User {
 		return phoneNumber;
 	}
 
-	public String getProfileImagePath() {
-		return profileImagePath;
+	public String getProfileImage() {
+		return profileImage;
 	}
 
 	public List<Role> getRoles() {
@@ -173,8 +162,8 @@ public class User {
 		this.phoneNumber = phoneNumber;
 	}
 
-	public void setProfileImagePath(String profileImagePath) {
-		this.profileImagePath = profileImagePath;
+	public void setProfileImage(String profileImage) {
+		this.profileImage = profileImage;
 	}
 
 	public void setRoles(List<Role> roles) {

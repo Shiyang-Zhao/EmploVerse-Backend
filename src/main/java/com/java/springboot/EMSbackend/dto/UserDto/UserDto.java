@@ -7,12 +7,13 @@ import org.springframework.web.multipart.MultipartFile;
 import com.java.springboot.EMSbackend.model.userModel.Role;
 
 public class UserDto {
-	// private long id;
+	private long id;
 	private String firstName;
 	private String lastName;
 	private String username;
 	private String email;
-	private String password;
+	private String password1;
+	private String password2;
 	private String phoneNumber;
 	private MultipartFile profileImage;
 	private List<Role> roles;
@@ -22,35 +23,38 @@ public class UserDto {
 	}
 
 	// Constructor
-	public UserDto(String firstName, String lastName, String username, String email, String password,
+	public UserDto(String firstName, String lastName, String username, String email, String password1, String password2,
 			String phoneNumber, MultipartFile profileImage, List<Role> roles) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.username = username;
 		this.email = email;
-		this.password = password;
+		this.password1 = password1;
+		this.password2 = password2;
 		this.phoneNumber = phoneNumber;
 		this.profileImage = profileImage;
 		this.roles = roles;
 	}
 
-	// public UserDto(long id, String firstName, String lastName, String username, String email, String password,
-	// 		String phoneNumber, MultipartFile profileImage, List<Role> roles) {
-	// 	this.id = id;
-	// 	this.firstName = firstName;
-	// 	this.lastName = lastName;
-	// 	this.username = username;
-	// 	this.email = email;
-	// 	this.password = password;
-	// 	this.phoneNumber = phoneNumber;
-	// 	this.profileImage = profileImage;
-	// 	this.roles = roles;
-	// }
+	public UserDto(long id, String firstName, String lastName, String username, String email, String password1,
+			String password2,
+			String phoneNumber, MultipartFile profileImage, List<Role> roles) {
+		this.id = id;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.username = username;
+		this.email = email;
+		this.password1 = password1;
+		this.password2 = password2;
+		this.phoneNumber = phoneNumber;
+		this.profileImage = profileImage;
+		this.roles = roles;
+	}
 
 	// Getters
-	// public long getId() {
-	// 	return id;
-	// }
+	public long getId() {
+		return id;
+	}
 
 	public String getFirstName() {
 		return firstName;
@@ -68,8 +72,12 @@ public class UserDto {
 		return email;
 	}
 
-	public String getPassword() {
-		return password;
+	public String getPassword1() {
+		return password1;
+	}
+
+	public String getPassword2() {
+		return password2;
 	}
 
 	public String getPhoneNumber() {
@@ -85,9 +93,9 @@ public class UserDto {
 	}
 
 	// Setters
-	// public void setId(long id) {
-	// 	this.id = id;
-	// }
+	public void setId(long id) {
+		this.id = id;
+	}
 
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
@@ -105,8 +113,12 @@ public class UserDto {
 		this.email = email;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	public void setPassword1(String password1) {
+		this.password1 = password1;
+	}
+
+	public void setPassword2(String password2) {
+		this.password2 = password2;
 	}
 
 	public void setPhoneNumber(String phoneNumber) {

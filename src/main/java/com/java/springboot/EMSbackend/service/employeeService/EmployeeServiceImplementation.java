@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -89,17 +88,17 @@ public class EmployeeServiceImplementation implements EmployeeService {
 	}
 
 	@Override
-	public Page<Employee> getPaginatedEmployees(List<Employee> employeeList, int pageNo, int pageSize, String sortField,
+	public Page<Employee> getPaginatedEmployees(int pageNo, int pageSize, String sortField,
 			String sortDir) {
 		try {
 			Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending()
 					: Sort.by(sortField).descending();
 
 			Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
-			int startIndex = (int) pageable.getOffset();
-			int endIndex = Math.min(startIndex + pageable.getPageSize(), employeeList.size());
-			List<Employee> paginatedList = employeeList.subList(startIndex, endIndex);
-			return new PageImpl<>(paginatedList, pageable, employeeList.size());
+			// int startIndex = (int) pageable.getOffset();
+			// int endIndex = Math.min(startIndex + pageable.getPageSize(), employeeList.size());
+			// List<Employee> paginatedList = employeeList.subList(startIndex, endIndex);
+			return employeeRepository.findAll(pageable);
 		} catch (Exception e) {
 			// Handle any exceptions thrown during paginated employee retrieval
 			throw new RuntimeException("Failed to retrieve paginated employees: " + e.getMessage());

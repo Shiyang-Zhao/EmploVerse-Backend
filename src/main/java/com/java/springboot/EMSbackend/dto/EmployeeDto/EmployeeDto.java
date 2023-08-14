@@ -18,6 +18,12 @@ public class EmployeeDto {
 		this.user = user;
 	}
 
+	public EmployeeDto(PersonalInfo personalInfo, EmployeeInfo employeeInfo, EducationInfo educationInfo) {
+		this.personalInfo = personalInfo;
+		this.employeeInfo = employeeInfo;
+		this.educationInfo = educationInfo;
+	}
+
 	public EmployeeDto(User user, PersonalInfo personalInfo, EmployeeInfo employeeInfo, EducationInfo educationInfo) {
 		this.user = user;
 		this.personalInfo = personalInfo;

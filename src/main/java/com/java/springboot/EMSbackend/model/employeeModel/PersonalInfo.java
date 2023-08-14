@@ -65,6 +65,16 @@ public class PersonalInfo {
 
     // Constructors
     public PersonalInfo() {
+        this.gender = "N/A";
+        this.birthday = LocalDate.now(); // A default birthdate
+        this.citizenship = "N/A";
+        this.ssn = "123-45-6789";
+        this.address1 = "N/A";
+        this.address2 = "N/A";
+        this.city = "Unknown";
+        this.state = "Unknown";
+        this.zipCode = "12345";
+        this.country = "N/A";
     }
 
     public PersonalInfo(String gender, LocalDate birthday, String citizenship, String ssn, String address1,

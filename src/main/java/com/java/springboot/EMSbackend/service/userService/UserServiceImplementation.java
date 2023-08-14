@@ -1,8 +1,14 @@
 package com.java.springboot.EMSbackend.service.userService;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -21,9 +27,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.java.springboot.EMSbackend.dto.UserDto.UserDto;
+import com.java.springboot.EMSbackend.model.employeeModel.Employee;
 import com.java.springboot.EMSbackend.model.userModel.User;
+import com.java.springboot.EMSbackend.repository.EmployeeRepository;
 import com.java.springboot.EMSbackend.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
@@ -31,22 +40,29 @@ import jakarta.transaction.Transactional;
 @Service
 public class UserServiceImplementation implements UserService, UserDetailsService {
 
+	// Define the base directory to store profile images
+
 	private final BCryptPasswordEncoder passwordEncoder;
 
 	private final UserRepository userRepository;
 
+	private final EmployeeRepository employeeRepository;
+
 	@Autowired
-	public UserServiceImplementation(BCryptPasswordEncoder passwordEncoder, UserRepository userRepository) {
+	public UserServiceImplementation(BCryptPasswordEncoder passwordEncoder, UserRepository userRepository,
+			EmployeeRepository employeeRepository) {
 		this.passwordEncoder = passwordEncoder;
 		this.userRepository = userRepository;
+		this.employeeRepository = employeeRepository;
 	}
 
 	// Map roles to Authorities
 	@Override
-	public UserDetails loadUserByUsername(String username) {
-		User user = userRepository.findByUsername(username)
-				.orElseThrow(() -> new UsernameNotFoundException("User not found for Username: " + username));
-		return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
+	public UserDetails loadUserByUsername(String usernameOrEmail) {
+		User user = userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
+				.orElseThrow(() -> new UsernameNotFoundException(
+						"User does not exist with username or email: " + usernameOrEmail));
+		return new org.springframework.security.core.userdetails.User(usernameOrEmail, user.getPassword(),
 				user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getName()))
 						.collect(Collectors.toList()));
 	}
@@ -74,16 +90,27 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 				.orElseThrow(() -> new RuntimeException("User not found for Email: " + email));
 	}
 
-	public void updateUser(User user, UserDto userDto) {
+	@Override
+	public User getUserByUsernameOrEmail(String usernameOrEmail) {
+		return userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
+				.orElseThrow(
+						() -> new RuntimeException("User does not exist with username or email: " + usernameOrEmail));
+	}
+
+	private void updateUserWithoutPasswordAndProfileImage(User user, UserDto userDto) {
 		try {
 			user.setFirstName(userDto.getFirstName());
 			user.setLastName(userDto.getLastName());
 			user.setUsername(userDto.getUsername());
 			user.setEmail((userDto.getEmail()));
-			user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+			// user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 			user.setPhoneNumber(userDto.getPhoneNumber());
-			user.setRoles(userDto.getRoles());
-			userRepository.save(user);
+			// if (userDto.getPassword1() == userDto.getPassword2()) {
+			// user.setPassword(userDto.getPassword1());
+			// userRepository.save(user);
+			// } else {
+			// throw new IllegalArgumentException("Passwords do not match");
+			// }
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to update user: " + e.getMessage());
 		}
@@ -92,19 +119,19 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 	@Override
 	public void updateUserById(long id, UserDto userDto) {
 		User user = getUserById(id);
-		updateUser(user, userDto);
+		updateUserWithoutPasswordAndProfileImage(user, userDto);
 	}
 
 	@Override
 	public void updateUserByUsername(String username, UserDto userDto) {
 		User user = getUserByUsername(username);
-		updateUser(user, userDto);
+		updateUserWithoutPasswordAndProfileImage(user, userDto);
 	}
 
 	@Override
 	public void updateUserByEmail(String email, UserDto userDto) {
 		User user = getUserByEmail(email);
-		updateUser(user, userDto);
+		updateUserWithoutPasswordAndProfileImage(user, userDto);
 	}
 
 	@Override
@@ -226,18 +253,69 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 	@Override
 	public User getCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String username = authentication.getName();
-		return userRepository.findByUsername(username)
+		String usernameOrEmail = authentication.getName();
+		return userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
 				.orElseThrow(() -> new RuntimeException("Failed to get details of the logged-in user"));
 	}
 
 	@Override
 	public void updateCurrentUser(UserDto userDto) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String username = authentication.getName();
-		User user = userRepository.findByUsername(username)
-				.orElseThrow(() -> new RuntimeException("Failed to update details of the logged-in user"));
-		updateUser(user, userDto);
+		User user = getCurrentUser();
+		updateUserWithoutPasswordAndProfileImage(user, userDto);
 	}
 
+	@Override
+	public void addCurrentUserToEmployees() {
+		User user = getCurrentUser();
+		Employee employee = new Employee(user);
+		employeeRepository.save(employee);
+	}
+
+	@Override
+	public void updateCurrentUserPassword(String newPassword) {
+		User user = getCurrentUser();
+		user.setPassword(passwordEncoder.encode(newPassword));
+	}
+
+	@Override
+	public void updateCurrentUserProfileIamge(MultipartFile newProfileImage) {
+
+		try {
+
+			// Create a subdirectory for the user based on their ID or username
+			User user = getCurrentUser();
+			String profileImagePath = user.getProfileImage();
+			String userSubdirectory = UserService.BASE_PROFILE_IMAGE_DIR + "/" + user.getUsername();
+			File directory = new File(userSubdirectory);
+			if (!directory.exists()) {
+				directory.mkdirs();
+			}
+
+			if (newProfileImage != null && !newProfileImage.isEmpty()) {
+				// Generate a unique filename for the profile image
+				String originalFilename = newProfileImage.getOriginalFilename();
+				System.out.println("Orignal File Name: " + originalFilename);
+
+				String fileExtension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+				String filename = UUID.randomUUID().toString() + "." + fileExtension;
+				profileImagePath = userSubdirectory + "/" + filename;
+				System.out.println("File Extension: " + originalFilename);
+
+				// Convert the MultipartFile to a BufferedImage
+				// BufferedImage bufferedImage = ImageIO.read(profileImage.getInputStream());
+				System.out.println("File Name: " + filename);
+				// Save the profile image to the user's subdirectory
+				Path destinationFile = Paths.get(userSubdirectory, filename);
+				Files.copy(newProfileImage.getInputStream(), destinationFile, StandardCopyOption.REPLACE_EXISTING);
+
+				// Save the BufferedImage as an image file
+				// File imageFile = new File(profileImagePath);
+				// ImageIO.write(bufferedImage, fileExtension, imageFile);
+				user.setProfileImage(profileImagePath);
+				userRepository.save(user);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to update the profile image: " + e.getMessage());
+		}
+	}
 }

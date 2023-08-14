@@ -4,11 +4,16 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.java.springboot.EMSbackend.dto.UserDto.UserDto;
 import com.java.springboot.EMSbackend.model.userModel.User;
 
 public interface UserService {
+
+    static final String BASE_PROFILE_IMAGE_DIR = "C:/Users/shiya/Downloads/Projects/EmploVerse/EmploVerse-Frontend/src/media/profileImages";
+
+    static final String DEFAULT_PROFILE_IMAGE_PATH = "C:/Users/shiya/Downloads/Projects/EmploVerse/EmploVerse-Frontend/src/media/profileImages/defaultProfileImage.jpg";
 
     UserDetails loadUserByUsername(String username);
 
@@ -19,6 +24,8 @@ public interface UserService {
     User getUserByUsername(String username);
 
     User getUserByEmail(String email);
+
+    User getUserByUsernameOrEmail(String usernameOrEmail);
 
     void updateUserById(long id, UserDto userDto);
 
@@ -42,4 +49,10 @@ public interface UserService {
     User getCurrentUser();
 
     void updateCurrentUser(UserDto userDto);
+
+    void addCurrentUserToEmployees();
+
+    void updateCurrentUserPassword(String newPassword);
+
+    void updateCurrentUserProfileIamge(MultipartFile newProfileImage);
 }

@@ -52,6 +52,14 @@ public class SalaryInfo {
     private String insuranceCoverage; // Details of insurance coverage provided by the employer.
 
     public SalaryInfo() {
+        this.amount = BigDecimal.ZERO;
+        this.payFrequency = "Monthly";
+        this.bonus = BigDecimal.ZERO;
+        this.taxDeduction = BigDecimal.ZERO;
+        this.overtimeHours = 0.0;
+        this.overtimeRate = 0.0;
+        this.deductions = "N/A";
+        this.insuranceCoverage = "N/A";
     }
 
     public SalaryInfo(BigDecimal amount, String payFrequency, BigDecimal bonus,

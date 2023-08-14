@@ -44,9 +44,9 @@ public class EmployeeController {
 	}
 
 	// Only Admin and Manager can add employees
-	@PostMapping("/saveEmployee")
+	@PostMapping("/createEmployee")
 	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-	public ResponseEntity<String> saveEmployee(@RequestBody EmployeeDto employeeDto) {
+	public ResponseEntity<String> createEmployee(@RequestBody EmployeeDto employeeDto) {
 		employeeService.createEmployee(employeeDto);
 		return ResponseEntity.ok("Employee is saved successfully!!!");
 	}
@@ -102,12 +102,12 @@ public class EmployeeController {
 
 	@GetMapping("/page/{pageNo}")
 	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
-	public ResponseEntity<Map<String, Object>> getPaginatedEmployees(@RequestBody List<Employee> employees,
+	public ResponseEntity<Map<String, Object>> getPaginatedEmployees(
 			@PathVariable(value = "pageNo") int pageNo,
 			@RequestParam(value = "sortField", required = false, defaultValue = "id") String sortField,
 			@RequestParam(value = "sortDir", required = false, defaultValue = "asc") String sortDir) {
 		int pageSize = 3;
-		Page<Employee> page = employeeService.getPaginatedEmployees(employees, pageNo, pageSize, sortField, sortDir);
+		Page<Employee> page = employeeService.getPaginatedEmployees(pageNo, pageSize, sortField, sortDir);
 
 		Map<String, Object> response = new HashMap<>();
 		response.put("currentPage", pageNo);

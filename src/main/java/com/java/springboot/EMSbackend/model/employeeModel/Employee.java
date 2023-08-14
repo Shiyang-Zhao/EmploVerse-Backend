@@ -51,6 +51,9 @@ public class Employee {
 	// the database)
 	public Employee(User user) {
 		this.user = user;
+		this.personalInfo = new PersonalInfo();
+		this.employeeInfo = new EmployeeInfo();
+		this.educationInfo = new EducationInfo();
 	}
 
 	public Employee(User user, PersonalInfo personalInfo, EmployeeInfo employeeInfo, EducationInfo educationInfo) {
