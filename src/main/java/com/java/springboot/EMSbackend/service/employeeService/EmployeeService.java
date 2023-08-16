@@ -30,4 +30,6 @@ public interface EmployeeService {
 
 	// List<Employee> sortEmployees(List<Employee> employees, String sortField,
 	// String sortDir);
+
+	void linkEmployeeToUser();
 }

@@ -12,10 +12,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "employees")
+@Table(name = "employees", uniqueConstraints = { @UniqueConstraint(columnNames = "user_id") })
 public class Employee {
 
 	@Id
@@ -23,7 +24,7 @@ public class Employee {
 	@Column(name = "id", updatable = false)
 	private long id;
 
-	@OneToOne(fetch = FetchType.LAZY, optional = false)
+	@OneToOne(fetch = FetchType.EAGER, optional = false)
 	@NotNull
 	@JoinColumn(name = "user_id", referencedColumnName = "id")
 	private User user;

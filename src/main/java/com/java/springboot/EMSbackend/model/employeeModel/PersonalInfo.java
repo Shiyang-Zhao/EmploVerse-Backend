@@ -8,11 +8,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 @Entity
+// @Table(name = "personal_info", uniqueConstraints = {
+// @UniqueConstraint(columnNames = "ssn") })
 @Table(name = "personal_info")
+
 public class PersonalInfo {
 
     @Id
@@ -66,7 +70,7 @@ public class PersonalInfo {
     // Constructors
     public PersonalInfo() {
         this.gender = "N/A";
-        this.birthday = LocalDate.now(); // A default birthdate
+        this.birthday = LocalDate.now();
         this.citizenship = "N/A";
         this.ssn = "123-45-6789";
         this.address1 = "N/A";

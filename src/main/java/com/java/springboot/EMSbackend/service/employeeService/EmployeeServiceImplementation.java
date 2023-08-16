@@ -1,6 +1,7 @@
 package com.java.springboot.EMSbackend.service.employeeService;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,9 +44,12 @@ public class EmployeeServiceImplementation implements EmployeeService {
 	@Override
 	public void createEmployee(EmployeeDto employeeDto) {
 		try {
-			employeeDto.getPersonalInfo().setSsn(passwordEncoder.encode(employeeDto.getPersonalInfo().getSsn()));
-			Employee newEmployee = new Employee(employeeDto.getUser(), employeeDto.getPersonalInfo(),
-					employeeDto.getEmployeeInfo(), employeeDto.getEducationInfo());
+			// employeeDto.getPersonalInfo().setSsn(passwordEncoder.encode(employeeDto.getPersonalInfo().getSsn()));
+			// Employee newEmployee = new Employee(employeeDto.getUser(),
+			// employeeDto.getPersonalInfo(),
+			// employeeDto.getEmployeeInfo(), employeeDto.getEducationInfo());
+
+			Employee newEmployee = new Employee(employeeDto.getUser());
 			employeeRepository.save(newEmployee);
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to save employee: " + e.getMessage());
@@ -96,7 +100,8 @@ public class EmployeeServiceImplementation implements EmployeeService {
 
 			Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
 			// int startIndex = (int) pageable.getOffset();
-			// int endIndex = Math.min(startIndex + pageable.getPageSize(), employeeList.size());
+			// int endIndex = Math.min(startIndex + pageable.getPageSize(),
+			// employeeList.size());
 			// List<Employee> paginatedList = employeeList.subList(startIndex, endIndex);
 			return employeeRepository.findAll(pageable);
 		} catch (Exception e) {
@@ -129,7 +134,7 @@ public class EmployeeServiceImplementation implements EmployeeService {
 			if (keyword.isEmpty()) {
 				// If the search keyword is empty, return all employees using findPaginated
 				// method
-				return getAllEmployees();
+				return new ArrayList<>();
 			}
 
 			Function<Employee, String> getter = createFieldToGetterMap(searchField);
@@ -208,6 +213,11 @@ public class EmployeeServiceImplementation implements EmployeeService {
 		BigDecimal netSalary = grossSalary.subtract(taxDeductionAmount);
 
 		return netSalary;
+	}
+
+	@Override
+	public void linkEmployeeToUser() {
+
 	}
 
 }

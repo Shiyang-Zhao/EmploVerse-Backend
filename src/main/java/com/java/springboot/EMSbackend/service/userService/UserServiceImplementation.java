@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -205,7 +206,7 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 			if (keyword.isEmpty()) {
 				// If the search keyword is empty, return all users using findPaginated
 				// method
-				return getAllUsers();
+				return new ArrayList<>();
 			}
 
 			Function<User, String> getter = createFieldToGetterMap(searchField);
