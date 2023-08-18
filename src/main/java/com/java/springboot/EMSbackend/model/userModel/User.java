@@ -18,12 +18,16 @@ import jakarta.persistence.Index;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name = "users", uniqueConstraints = { @UniqueConstraint(columnNames = "username"),
 		@UniqueConstraint(columnNames = "email"),
 		@UniqueConstraint(columnNames = "phone_number") }, indexes = {
@@ -52,8 +56,8 @@ public class User {
 	@Column(name = "username")
 	private String username;
 
-	@NotBlank
 	@Email
+	@NotBlank
 	@Column(name = "email")
 	private String email;
 
@@ -68,24 +72,14 @@ public class User {
 	@Column(name = "phone_number")
 	private String phoneNumber;
 
-	@NotNull
+	@NotBlank
 	@Column(name = "profile_image")
 	private String profileImage;
 
+	@NotBlank
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@NotEmpty
 	@JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
 	private List<Role> roles = new ArrayList<>();
-
-	// @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade =
-	// CascadeType.ALL)
-	// @NotNull
-	// private Employee employee;
-
-	// Constructors
-	public User() {
-
-	}
 
 	public User(String firstName, String lastName, String username, String email, String password,
 			String phoneNumber, String profileImage, List<Role> roles) {
@@ -96,77 +90,6 @@ public class User {
 		this.password = password;
 		this.phoneNumber = phoneNumber;
 		this.profileImage = profileImage;
-		this.roles = roles;
-	}
-
-	// Getters and Setters
-	// Getters
-	public long getId() {
-		return id;
-	}
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public String getPhoneNumber() {
-		return phoneNumber;
-	}
-
-	public String getProfileImage() {
-		return profileImage;
-	}
-
-	public List<Role> getRoles() {
-		return roles;
-	}
-
-	// Setters
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
-	}
-
-	public void setProfileImage(String profileImage) {
-		this.profileImage = profileImage;
-	}
-
-	public void setRoles(List<Role> roles) {
 		this.roles = roles;
 	}
 }

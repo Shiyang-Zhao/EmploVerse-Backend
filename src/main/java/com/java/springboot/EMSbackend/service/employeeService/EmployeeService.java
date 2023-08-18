@@ -28,8 +28,4 @@ public interface EmployeeService {
 
 	BigDecimal setNetSalaryById(long id, SalaryDto salaryDto);
 
-	// List<Employee> sortEmployees(List<Employee> employees, String sortField,
-	// String sortDir);
-
-	void linkEmployeeToUser();
 }

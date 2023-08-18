@@ -23,9 +23,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.java.springboot.EMSbackend.config.JwtTokenUtil;
 import com.java.springboot.EMSbackend.dto.UserDto.UserDto;
 import com.java.springboot.EMSbackend.model.userModel.JwtRequest;
+import com.java.springboot.EMSbackend.model.userModel.JwtTokenUtil;
 import com.java.springboot.EMSbackend.model.userModel.User;
 import com.java.springboot.EMSbackend.repository.EmployeeRepository;
 import com.java.springboot.EMSbackend.repository.UserRepository;

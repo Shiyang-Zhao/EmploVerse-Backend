@@ -9,8 +9,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "salary_info")
 public class SalaryInfo {
 
@@ -74,75 +78,5 @@ public class SalaryInfo {
         this.deductions = deductions;
         this.insuranceCoverage = insuranceCoverage;
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
-    public String getPayFrequency() {
-        return payFrequency;
-    }
-
-    public void setPayFrequency(String payFrequency) {
-        this.payFrequency = payFrequency;
-    }
-
-    public BigDecimal getBonus() {
-        return bonus;
-    }
-
-    public void setBonus(BigDecimal bonus) {
-        this.bonus = bonus;
-    }
-
-    public BigDecimal getTaxDeduction() {
-        return taxDeduction;
-    }
-
-    public void setTaxDeduction(BigDecimal taxDeduction) {
-        this.taxDeduction = taxDeduction;
-    }
-
-    public Double getOvertimeHours() {
-        return overtimeHours;
-    }
-
-    public void setOvertimeHours(Double overtimeHours) {
-        this.overtimeHours = overtimeHours;
-    }
-
-    public Double getOvertimeRate() {
-        return overtimeRate;
-    }
-
-    public void setOvertimeRate(Double overtimeRate) {
-        this.overtimeRate = overtimeRate;
-    }
-
-    public String getDeductions() {
-        return deductions;
-    }
-
-    public void setDeductions(String deductions) {
-        this.deductions = deductions;
-    }
-
-    public String getInsuranceCoverage() {
-        return insuranceCoverage;
-    }
-
-    public void setInsuranceCoverage(String insuranceCoverage) {
-        this.insuranceCoverage = insuranceCoverage;
-    }
-
-    // Constructors, getters, and setters
 
 }

@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.java.springboot.EMSbackend.dto.UserDto.UserDto;
 import com.java.springboot.EMSbackend.model.userModel.User;
+import com.java.springboot.EMSbackend.model.employeeModel.Employee;
 
 public interface UserService {
 
@@ -55,4 +56,6 @@ public interface UserService {
     void updateCurrentUserPassword(String newPassword);
 
     void updateCurrentUserProfileIamge(MultipartFile newProfileImage);
+
+    Employee getCurrentEmployee();
 }

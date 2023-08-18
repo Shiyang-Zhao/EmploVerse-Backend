@@ -12,8 +12,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "employee_info")
 public class EmployeeInfo {
 
@@ -62,7 +66,6 @@ public class EmployeeInfo {
     @JoinColumn(name = "salary_info_id", referencedColumnName = "id")
     private SalaryInfo salaryInfo;
 
-    // Constructors
     public EmployeeInfo() {
         this.startDate = LocalDate.now();
         this.endDate = LocalDate.now();
@@ -88,91 +91,6 @@ public class EmployeeInfo {
         this.workLocation = workLocation;
         this.workSchedule = workSchedule;
         this.status = status;
-        this.salaryInfo = salaryInfo;
-    }
-
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
-    }
-
-    public String getEmploymentType() {
-        return employmentType;
-    }
-
-    public void setEmploymentType(String employmentType) {
-        this.employmentType = employmentType;
-    }
-
-    public String getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(String department) {
-        this.department = department;
-    }
-
-    public String getManager() {
-        return manager;
-    }
-
-    public void setManager(String manager) {
-        this.manager = manager;
-    }
-
-    public String getJobTitles() {
-        return jobTitles;
-    }
-
-    public void setJobTitles(String jobTitles) {
-        this.jobTitles = jobTitles;
-    }
-
-    public String getWorkLocation() {
-        return workLocation;
-    }
-
-    public void setWorkLocation(String workLocation) {
-        this.workLocation = workLocation;
-    }
-
-    public String getWorkSchedule() {
-        return workSchedule;
-    }
-
-    public void setWorkSchedule(String workSchedule) {
-        this.workSchedule = workSchedule;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public SalaryInfo getSalaryInfo() {
-        return salaryInfo;
-    }
-
-    public void setSalaryInfo(SalaryInfo salaryInfo) {
         this.salaryInfo = salaryInfo;
     }
 }

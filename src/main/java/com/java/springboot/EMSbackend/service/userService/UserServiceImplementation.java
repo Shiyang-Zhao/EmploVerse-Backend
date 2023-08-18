@@ -319,4 +319,13 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 			throw new RuntimeException("Failed to update the profile image: " + e.getMessage());
 		}
 	}
+
+	@Override
+	public Employee getCurrentEmployee() {
+		User user = getCurrentUser();
+		System.out.print(employeeRepository.findByUser(user));
+		return employeeRepository.findByUser(user)
+				.orElseThrow(() -> new RuntimeException("Current user does not have a corrsponding employee"));
+	}
+
 }

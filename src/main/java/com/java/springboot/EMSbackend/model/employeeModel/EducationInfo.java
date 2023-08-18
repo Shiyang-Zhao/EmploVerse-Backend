@@ -7,8 +7,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "education_info")
 public class EducationInfo {
 
@@ -16,6 +20,7 @@ public class EducationInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false)
     private Long id;
+
     // Education information
     @NotNull
     @Column(name = "university")
@@ -45,43 +50,6 @@ public class EducationInfo {
         this.university = university;
         this.degree = degree;
         this.major = major;
-        this.gpa = gpa;
-    }
-
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public String getUniversity() {
-        return university;
-    }
-
-    public void setUniversity(String university) {
-        this.university = university;
-    }
-
-    public String getDegree() {
-        return degree;
-    }
-
-    public void setDegree(String degree) {
-        this.degree = degree;
-    }
-
-    public String getMajor() {
-        return major;
-    }
-
-    public void setMajor(String major) {
-        this.major = major;
-    }
-
-    public String getGpa() {
-        return gpa;
-    }
-
-    public void setGpa(String gpa) {
         this.gpa = gpa;
     }
 }

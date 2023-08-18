@@ -215,9 +215,4 @@ public class EmployeeServiceImplementation implements EmployeeService {
 		return netSalary;
 	}
 
-	@Override
-	public void linkEmployeeToUser() {
-
-	}
-
 }

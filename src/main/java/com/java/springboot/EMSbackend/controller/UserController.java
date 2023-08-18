@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.java.springboot.EMSbackend.dto.UserDto.UserDto;
+import com.java.springboot.EMSbackend.model.employeeModel.Employee;
 import com.java.springboot.EMSbackend.model.userModel.JwtRequest;
 import com.java.springboot.EMSbackend.model.userModel.JwtResponse;
 import com.java.springboot.EMSbackend.model.userModel.User;
@@ -214,5 +215,11 @@ public class UserController {
 	public ResponseEntity<String> updateCurrentUserProfileIamge(@RequestParam MultipartFile newProfileImage) {
 		userService.updateCurrentUserProfileIamge(newProfileImage);
 		return ResponseEntity.ok("Profile image is updated successfully!!!");
+	}
+
+	@GetMapping("/getCurrentEmployee")
+	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+	public ResponseEntity<Employee> getCurrentEmployee() {
+		return ResponseEntity.ok(userService.getCurrentEmployee());
 	}
 }
