@@ -22,17 +22,17 @@ public interface UserService {
 
     User getUserById(long id);
 
-    User getUserByUsername(String username);
+    // User getUserByUsername(String username);
 
-    User getUserByEmail(String email);
+    // User getUserByEmail(String email);
 
     User getUserByUsernameOrEmail(String usernameOrEmail);
 
     void updateUserById(long id, UserDto userDto);
 
-    void updateUserByUsername(String username, UserDto userDto);
+    // void updateUserByUsername(String username, UserDto userDto);
 
-    void updateUserByEmail(String email, UserDto userDto);
+    // void updateUserByEmail(String email, UserDto userDto);
 
     void deleteUserById(long id);
 

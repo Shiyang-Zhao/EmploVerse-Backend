@@ -56,13 +56,6 @@ public class UserController {
 	// @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
 	public ResponseEntity<?> authenticate(@RequestBody JwtRequest authenticationRequest) throws Exception {
 		String token = jwtService.authenticateUser(authenticationRequest);
-		// long id =
-		// userService.getUserByUsernameOrEmail(authenticationRequest.getUsernameOrEmail()).getId();
-		// String username =
-		// userService.getUserByUsernameOrEmail(authenticationRequest.getUsernameOrEmail())
-		// .getUsername();
-		// String email =
-		// userService.getUserByUsernameOrEmail(authenticationRequest.getUsernameOrEmail()).getEmail();
 		return ResponseEntity
 				.ok(new JwtResponse(token, authenticationRequest.getRoles()));
 	}
@@ -91,19 +84,19 @@ public class UserController {
 		return ResponseEntity.ok(user);
 	}
 
-	@GetMapping("/getUserByUsername/{username}")
-	@PreAuthorize("hasAnyRole('ADMIN')")
-	public ResponseEntity<User> getUserByUsername(@PathVariable(value = "username") String username) {
-		User user = userService.getUserByUsername(username);
-		return ResponseEntity.ok(user);
-	}
+	// @GetMapping("/getUserByUsername/{username}")
+	// @PreAuthorize("hasAnyRole('ADMIN')")
+	// public ResponseEntity<User> getUserByUsername(@PathVariable(value = "username") String username) {
+	// 	User user = userService.getUserByUsername(username);
+	// 	return ResponseEntity.ok(user);
+	// }
 
-	@GetMapping("/getUserByEmail/{email}")
-	@PreAuthorize("hasAnyRole('ADMIN')")
-	public ResponseEntity<User> getUserByEmail(@PathVariable(value = "email") String email) {
-		User user = userService.getUserByEmail(email);
-		return ResponseEntity.ok(user);
-	}
+	// @GetMapping("/getUserByEmail/{email}")
+	// @PreAuthorize("hasAnyRole('ADMIN')")
+	// public ResponseEntity<User> getUserByEmail(@PathVariable(value = "email") String email) {
+	// 	User user = userService.getUserByEmail(email);
+	// 	return ResponseEntity.ok(user);
+	// }
 
 	// Update user APIs
 	@PostMapping("/updateUserById/{id}")
@@ -114,21 +107,21 @@ public class UserController {
 		return ResponseEntity.ok("User is updated successfully!!!");
 	}
 
-	@PostMapping("/updateUserByUsername/{username}")
-	@PreAuthorize("hasAnyRole('ADMIN')")
-	public ResponseEntity<String> updateUserByUsername(@PathVariable(value = "username") String username,
-			@RequestBody UserDto userDto) {
-		userService.updateUserByUsername(username, userDto);
-		return ResponseEntity.ok("User is updated successfully!!!");
-	}
+	// @PostMapping("/updateUserByUsername/{username}")
+	// @PreAuthorize("hasAnyRole('ADMIN')")
+	// public ResponseEntity<String> updateUserByUsername(@PathVariable(value = "username") String username,
+	// 		@RequestBody UserDto userDto) {
+	// 	userService.updateUserByUsername(username, userDto);
+	// 	return ResponseEntity.ok("User is updated successfully!!!");
+	// }
 
-	@PostMapping("/updateUserByEmail/{email}")
-	@PreAuthorize("hasAnyRole('ADMIN')")
-	public ResponseEntity<String> updateUserByEmail(@PathVariable(value = "email") String email,
-			@RequestBody UserDto userDto) {
-		userService.updateUserByEmail(email, userDto);
-		return ResponseEntity.ok("User is updated successfully!!!");
-	}
+	// @PostMapping("/updateUserByEmail/{email}")
+	// @PreAuthorize("hasAnyRole('ADMIN')")
+	// public ResponseEntity<String> updateUserByEmail(@PathVariable(value = "email") String email,
+	// 		@RequestBody UserDto userDto) {
+	// 	userService.updateUserByEmail(email, userDto);
+	// 	return ResponseEntity.ok("User is updated successfully!!!");
+	// }
 
 	// Delete user APIs
 	@PostMapping("/deleteUserById/{id}")

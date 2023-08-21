@@ -8,6 +8,7 @@ import com.java.springboot.EMSbackend.model.userModel.Role;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -50,6 +51,6 @@ public class UserDto {
 	@NotNull
 	private MultipartFile profileImage;
 
-	@NotBlank
+	@NotEmpty
 	private List<Role> roles;
 }

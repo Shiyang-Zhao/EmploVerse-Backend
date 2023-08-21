@@ -79,17 +79,19 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 				.orElseThrow(() -> new RuntimeException("User not found for ID: " + id));
 	}
 
-	@Override
-	public User getUserByUsername(String username) {
-		return userRepository.findByUsername(username)
-				.orElseThrow(() -> new RuntimeException("User not found for Username: " + username));
-	}
+	// @Override
+	// public User getUserByUsername(String username) {
+	// return userRepository.findByUsername(username)
+	// .orElseThrow(() -> new RuntimeException("User not found for Username: " +
+	// username));
+	// }
 
-	@Override
-	public User getUserByEmail(String email) {
-		return userRepository.findByEmail(email)
-				.orElseThrow(() -> new RuntimeException("User not found for Email: " + email));
-	}
+	// @Override
+	// public User getUserByEmail(String email) {
+	// return userRepository.findByEmail(email)
+	// .orElseThrow(() -> new RuntimeException("User not found for Email: " +
+	// email));
+	// }
 
 	@Override
 	public User getUserByUsernameOrEmail(String usernameOrEmail) {
@@ -123,17 +125,17 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 		updateUserWithoutPasswordAndProfileImage(user, userDto);
 	}
 
-	@Override
-	public void updateUserByUsername(String username, UserDto userDto) {
-		User user = getUserByUsername(username);
-		updateUserWithoutPasswordAndProfileImage(user, userDto);
-	}
+	// @Override
+	// public void updateUserByUsername(String username, UserDto userDto) {
+	// User user = getUserByUsername(username);
+	// updateUserWithoutPasswordAndProfileImage(user, userDto);
+	// }
 
-	@Override
-	public void updateUserByEmail(String email, UserDto userDto) {
-		User user = getUserByEmail(email);
-		updateUserWithoutPasswordAndProfileImage(user, userDto);
-	}
+	// @Override
+	// public void updateUserByEmail(String email, UserDto userDto) {
+	// User user = getUserByEmail(email);
+	// updateUserWithoutPasswordAndProfileImage(user, userDto);
+	// }
 
 	@Override
 	public void deleteUserById(long id) {
@@ -282,7 +284,6 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 	public void updateCurrentUserProfileIamge(MultipartFile newProfileImage) {
 
 		try {
-
 			// Create a subdirectory for the user based on their ID or username
 			User user = getCurrentUser();
 			String profileImagePath = user.getProfileImage();
@@ -290,21 +291,23 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 			File directory = new File(userSubdirectory);
 			if (!directory.exists()) {
 				directory.mkdirs();
+			} else {
+				File[] files = directory.listFiles();
+				if (files != null) {
+					for (File file : files) {
+						file.delete();
+					}
+				}
 			}
 
 			if (newProfileImage != null && !newProfileImage.isEmpty()) {
 				// Generate a unique filename for the profile image
 				String originalFilename = newProfileImage.getOriginalFilename();
-				System.out.println("Orignal File Name: " + originalFilename);
 
 				String fileExtension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
 				String filename = UUID.randomUUID().toString() + "." + fileExtension;
 				profileImagePath = userSubdirectory + "/" + filename;
-				System.out.println("File Extension: " + originalFilename);
 
-				// Convert the MultipartFile to a BufferedImage
-				// BufferedImage bufferedImage = ImageIO.read(profileImage.getInputStream());
-				System.out.println("File Name: " + filename);
 				// Save the profile image to the user's subdirectory
 				Path destinationFile = Paths.get(userSubdirectory, filename);
 				Files.copy(newProfileImage.getInputStream(), destinationFile, StandardCopyOption.REPLACE_EXISTING);

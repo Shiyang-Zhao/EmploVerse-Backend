@@ -82,9 +82,6 @@ public class JwtServiceImplementation implements JwtService {
                 profileImagePath = userSubdirectory + "/" + filename;
                 System.out.println("File Extension: " + originalFilename);
 
-                // Convert the MultipartFile to a BufferedImage
-                // BufferedImage bufferedImage = ImageIO.read(profileImage.getInputStream());
-
                 System.out.println("File Name: " + filename);
                 // Save the profile image to the user's subdirectory
                 Path destinationFile = Paths.get(userSubdirectory, filename);
