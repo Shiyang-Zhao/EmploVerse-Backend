@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -86,7 +87,6 @@ public class EmployeeServiceImplementation implements EmployeeService {
 		try {
 			employeeRepository.deleteById(id);
 		} catch (Exception e) {
-			// Handle any exceptions thrown during employee deletion
 			throw new RuntimeException("Failed to delete employee: " + e.getMessage());
 		}
 	}

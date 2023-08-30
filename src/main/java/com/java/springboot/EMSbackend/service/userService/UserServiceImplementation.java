@@ -36,8 +36,6 @@ import com.java.springboot.EMSbackend.model.userModel.User;
 import com.java.springboot.EMSbackend.repository.EmployeeRepository;
 import com.java.springboot.EMSbackend.repository.UserRepository;
 
-import jakarta.transaction.Transactional;
-
 @Service
 public class UserServiceImplementation implements UserService, UserDetailsService {
 
@@ -148,7 +146,6 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 	}
 
 	@Override
-	@Transactional
 	public void deleteUserByUsername(String username) {
 		try {
 			userRepository.deleteByUsername(username);
@@ -159,7 +156,6 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 	}
 
 	@Override
-	@Transactional
 	public void deleteUserByEmail(String email) {
 		try {
 			userRepository.deleteByEmail(email);

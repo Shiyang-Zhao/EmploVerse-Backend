@@ -52,7 +52,7 @@ public class SecurityConfiguration {
                 .csrf().disable()
                 .cors().and()
                 // dont authenticate this particular request
-                .authorizeHttpRequests().requestMatchers("/user/register", "/user/authenticate", "/user/logout")
+                .authorizeHttpRequests().requestMatchers("/user/register", "/user/authenticate", "/user/logout", "/ws/**")
                 .permitAll()
                 .requestMatchers(HttpMethod.GET, "/employees").hasAnyRole("ADMIN", "MANAGER", "USER")
                 .requestMatchers(HttpMethod.POST, "/employees").hasAnyRole("ADMIN", "MANAGER")

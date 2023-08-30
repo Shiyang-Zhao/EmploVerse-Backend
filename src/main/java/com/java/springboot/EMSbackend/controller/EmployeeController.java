@@ -58,14 +58,6 @@ public class EmployeeController {
 		return ResponseEntity.ok(employee);
 	}
 
-	// @GetMapping("/getEmployeeByUsername/{username}")
-	// @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
-	// public ResponseEntity<Employee> getEmployeeByUsername(@PathVariable(value =
-	// "username") String username) {
-	// Employee employee = employeeService.getEmployeeByUsername(username);
-	// return ResponseEntity.ok(employee);
-	// }
-
 	// Only Admin and Manager can update employees
 	@PostMapping("/updateEmployeeById/{id}")
 	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
@@ -75,15 +67,6 @@ public class EmployeeController {
 		return ResponseEntity.ok("Employee is updated successfully!!!");
 	}
 
-	// @PostMapping("/updateEmployeeByUsername/{username}")
-	// @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-	// public ResponseEntity<String> updateEmployeeByUsername(@PathVariable(value =
-	// "username") String username,
-	// @RequestBody EmployeeDto employeeDto) {
-	// employeeService.updateEmployeeByUsername(username, employeeDto);
-	// return ResponseEntity.ok("Employee is updated successfully!!!");
-	// }
-
 	// Only Admin and Manager can delete employees
 	@PostMapping("/deleteEmployeeById/{id}")
 	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
@@ -91,14 +74,6 @@ public class EmployeeController {
 		employeeService.deleteEmployeeById(id);
 		return ResponseEntity.ok("Employee is deleted successfully!!!");
 	}
-
-	// @PostMapping("/deleteEmployeeByUsername/{username}")
-	// @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-	// public ResponseEntity<String> deleteEmployeeByUsername(@PathVariable(value =
-	// "username") String username) {
-	// employeeService.deleteEmployeeByUsername(username);
-	// return ResponseEntity.ok("Employee is deleted successfully!!!");
-	// }
 
 	@GetMapping("/page/{pageNo}")
 	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
