@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -37,6 +38,12 @@ public class JwtServiceImplementation implements JwtService {
 
     // Define the base directory to store profile images
 
+    @Value("${empverse.base-image-dir}")
+    private String baseProfileImageDir;
+
+    @Value("${empverse.default-image-path}")
+    private String defaultProfileImagePath;
+
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtTokenUtil jwtTokenUtil;
     private final AuthenticationManager authenticationManager;
@@ -61,9 +68,9 @@ public class JwtServiceImplementation implements JwtService {
     @Override
     public User registeUser(UserDto userDto) throws Exception {
         try {
-            String profileImagePath = UserService.DEFAULT_PROFILE_IMAGE_PATH;
+            String profileImagePath = defaultProfileImagePath;
             // Create a subdirectory for the user based on their ID or username
-            String userSubdirectory = UserService.BASE_PROFILE_IMAGE_DIR + "/" + userDto.getUsername();
+            String userSubdirectory = baseProfileImageDir + "/" + userDto.getUsername();
             File directory = new File(userSubdirectory);
             if (!directory.exists()) {
                 directory.mkdirs();
@@ -87,9 +94,6 @@ public class JwtServiceImplementation implements JwtService {
                 Path destinationFile = Paths.get(userSubdirectory, filename);
                 Files.copy(profileImage.getInputStream(), destinationFile, StandardCopyOption.REPLACE_EXISTING);
 
-                // Save the BufferedImage as an image file
-                // File imageFile = new File(profileImagePath);
-                // ImageIO.write(bufferedImage, fileExtension, imageFile);
             }
 
             if (userDto.getPassword1().equals(userDto.getPassword2())) {

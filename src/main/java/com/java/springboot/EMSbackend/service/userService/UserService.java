@@ -12,10 +12,6 @@ import com.java.springboot.EMSbackend.model.employeeModel.Employee;
 
 public interface UserService {
 
-    static final String BASE_PROFILE_IMAGE_DIR = "C:/Users/shiya/Downloads/Projects/EmploVerse/EmploVerse-Frontend/public/media/images";
-
-    static final String DEFAULT_PROFILE_IMAGE_PATH = "C:/Users/shiya/Downloads/Projects/EmploVerse/EmploVerse-Frontend/public/media/images/defaultProfileImage.jpg";
-
     UserDetails loadUserByUsername(String username);
 
     List<User> getAllUsers();

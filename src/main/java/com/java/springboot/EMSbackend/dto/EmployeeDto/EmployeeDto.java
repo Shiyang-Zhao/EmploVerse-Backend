@@ -6,11 +6,13 @@ import com.java.springboot.EMSbackend.model.employeeModel.PersonalInfo;
 import com.java.springboot.EMSbackend.model.userModel.User;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.AllArgsConstructor;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
 public class EmployeeDto {
 	private User user;

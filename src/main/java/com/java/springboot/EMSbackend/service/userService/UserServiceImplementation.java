@@ -15,6 +15,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -40,6 +41,9 @@ import com.java.springboot.EMSbackend.repository.UserRepository;
 public class UserServiceImplementation implements UserService, UserDetailsService {
 
 	// Define the base directory to store profile images
+
+	@Value("${empverse.base-image-dir}")
+	private String baseProfileImageDir;
 
 	private final BCryptPasswordEncoder passwordEncoder;
 
@@ -283,7 +287,7 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 			// Create a subdirectory for the user based on their ID or username
 			User user = getCurrentUser();
 			String profileImagePath = user.getProfileImage();
-			String userSubdirectory = UserService.BASE_PROFILE_IMAGE_DIR + "/" + user.getUsername();
+			String userSubdirectory = baseProfileImageDir + "/" + user.getUsername();
 			File directory = new File(userSubdirectory);
 			if (!directory.exists()) {
 				directory.mkdirs();
