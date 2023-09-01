@@ -52,10 +52,10 @@ public class SecurityConfiguration {
                 .csrf().disable()
                 .cors().and()
                 // dont authenticate this particular request
-                .authorizeHttpRequests().requestMatchers("/user/register", "/user/authenticate", "/user/logout", "/ws/**")
-                .permitAll()
+                .authorizeHttpRequests().requestMatchers("/user/register", "/user/authenticate", "/user/logout").permitAll()
                 .requestMatchers(HttpMethod.GET, "/employees").hasAnyRole("ADMIN", "MANAGER", "USER")
                 .requestMatchers(HttpMethod.POST, "/employees").hasAnyRole("ADMIN", "MANAGER")
+                .requestMatchers("/ws/**").hasAnyRole("ADMIN", "MANAGER", "USER") // Allow only authorized roles for WebSocket
                 // all other requests need to be authenticated
                 .anyRequest().authenticated().and()
 

@@ -13,9 +13,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Value("${empverse.cors.origins}")
     private String[] allowedOrigins;
 
-    @Value("${server.servlet.context-path}")
-    private String contextPath;
-
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")

@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 public class WebSocketController {
 
     @MessageMapping("/hello")
-    @SendTo("/topic/greetings")
+    @SendTo("/toClient/greetings")
     public String greeting(String message) throws Exception {
         log.info("Received hello: {}", message);
         return "Hello, " + message + "!";
