@@ -1,4 +1,4 @@
-package com.java.springboot.EMSbackend.config;
+package com.java.springboot.EMSbackend.config.Web;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +17,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins(allowedOrigins)
-                .allowedMethods("*")
+                .allowedMethods("*") 
                 .allowedHeaders("*")
                 .exposedHeaders("*")
                 .allowCredentials(true)

@@ -1,4 +1,4 @@
-package com.java.springboot.EMSbackend.config;
+package com.java.springboot.EMSbackend.config.Web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -16,17 +16,20 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.java.springboot.EMSbackend.config.JWT.JwtAuthenticationEntryPoint;
+import com.java.springboot.EMSbackend.config.JWT.JwtRequestFilter;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
-public class SecurityConfiguration {
+public class WebSecurityConfig {
 
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final UserDetailsService jwtUserDetailsService;
     private final JwtRequestFilter jwtRequestFilter;
 
     @Autowired
-    public SecurityConfiguration(
+    public WebSecurityConfig(
             JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
             UserDetailsService jwtUserDetailsService,
             JwtRequestFilter jwtRequestFilter) {
@@ -52,15 +55,14 @@ public class SecurityConfiguration {
                 .csrf().disable()
                 .cors().and()
                 // dont authenticate this particular request
-                .authorizeHttpRequests().requestMatchers("/user/register", "/user/authenticate", "/user/logout").permitAll()
+                .authorizeHttpRequests().requestMatchers("/user/register", "/user/authenticate", "/user/logout", "/ws/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/employees").hasAnyRole("ADMIN", "MANAGER", "USER")
                 .requestMatchers(HttpMethod.POST, "/employees").hasAnyRole("ADMIN", "MANAGER")
-                .requestMatchers("/ws/**").hasAnyRole("ADMIN", "MANAGER", "USER") // Allow only authorized roles for WebSocket
+                .requestMatchers(HttpMethod.GET, "/users").hasAnyRole("ADMIN", "MANAGER", "USER")
+                .requestMatchers(HttpMethod.POST, "/users").hasAnyRole("ADMIN")
                 // all other requests need to be authenticated
                 .anyRequest().authenticated().and()
-
-                // make sure we use stateless session; session won't be used to
-                // store user's state.
+                // make sure we use stateless session; session won't be used to store user's state.
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 

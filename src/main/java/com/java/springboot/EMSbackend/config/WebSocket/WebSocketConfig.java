@@ -1,4 +1,4 @@
-package com.java.springboot.EMSbackend.config;
+package com.java.springboot.EMSbackend.config.WebSocket;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -16,13 +16,18 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic");
+        config.enableSimpleBroker("/toClient");
         config.setApplicationDestinationPrefixes("/toServer");
     }
 
+    // Handle the Cors
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").setAllowedOriginPatterns(allowedOrigins).withSockJS();
+        // registry.addEndpoint("/ws")
+        //         .setAllowedOrigins(allowedOrigins);
+        registry.addEndpoint("/ws")
+                .setAllowedOriginPatterns(allowedOrigins)
+                .withSockJS();
     }
 
 }

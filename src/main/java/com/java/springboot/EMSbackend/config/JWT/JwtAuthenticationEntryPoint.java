@@ -1,4 +1,4 @@
-package com.java.springboot.EMSbackend.config;
+package com.java.springboot.EMSbackend.config.JWT;
 
 import java.io.IOException;
 import java.io.Serializable;
