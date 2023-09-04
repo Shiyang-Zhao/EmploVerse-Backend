@@ -54,15 +54,19 @@ public class WebSecurityConfig {
         http
                 .csrf().disable()
                 .cors().and()
+                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
                 // dont authenticate this particular request
-                .authorizeHttpRequests().requestMatchers("/user/register", "/user/authenticate", "/user/logout", "/ws/**").permitAll()
+                .authorizeHttpRequests()
+                .requestMatchers("/users/register", "/users/authenticate", "/users/logout", "/ws/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/employees").hasAnyRole("ADMIN", "MANAGER", "USER")
                 .requestMatchers(HttpMethod.POST, "/employees").hasAnyRole("ADMIN", "MANAGER")
-                .requestMatchers(HttpMethod.GET, "/users").hasAnyRole("ADMIN", "MANAGER", "USER")
-                .requestMatchers(HttpMethod.POST, "/users").hasAnyRole("ADMIN")
+                // .requestMatchers(HttpMethod.GET, "/users").hasAnyRole("ADMIN", "MANAGER",
+                // "USER")
+                // .requestMatchers(HttpMethod.POST, "/users").hasAnyRole("ADMIN")
                 // all other requests need to be authenticated
                 .anyRequest().authenticated().and()
-                // make sure we use stateless session; session won't be used to store user's state.
+                // make sure we use stateless session; session won't be used to store user's
+                // state.
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 

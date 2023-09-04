@@ -31,7 +31,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 // @CrossOrigin(origins = { "http://localhost:3000",
 // 		"http://emploverse-frontend.herokuapp.com/" }, allowCredentials = "true")
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
 
 	private final UserService userService;
