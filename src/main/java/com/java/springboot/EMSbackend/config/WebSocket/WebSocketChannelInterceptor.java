@@ -33,13 +33,12 @@ public class WebSocketChannelInterceptor implements ChannelInterceptor {
         if (StompCommand.CONNECT == accessor.getCommand() || StompCommand.SEND == accessor.getCommand()) {
             // Extract the JWT token from the headers
             String jwt = accessor.getFirstNativeHeader("Authorization").substring(7);
-
+            logger.info(jwt);
             if (jwt != null && !jwt.isEmpty() && !jwtTokenUtil.isTokenExpired(jwt)
                     && !jwtTokenUtil.isTokenBlacklisted(jwt)) {
-                logger.info(jwt);
                 return message;
             }
         }
-        return null;
+        return message;
     }
 }

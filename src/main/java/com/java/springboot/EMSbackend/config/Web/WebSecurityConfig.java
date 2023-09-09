@@ -60,10 +60,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/users/register", "/users/authenticate", "/users/logout", "/ws/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/employees").hasAnyRole("ADMIN", "MANAGER", "USER")
                 .requestMatchers(HttpMethod.POST, "/employees").hasAnyRole("ADMIN", "MANAGER")
-                // .requestMatchers(HttpMethod.GET, "/users").hasAnyRole("ADMIN", "MANAGER",
-                // "USER")
-                // .requestMatchers(HttpMethod.POST, "/users").hasAnyRole("ADMIN")
-                // all other requests need to be authenticated
+                
                 .anyRequest().authenticated().and()
                 // make sure we use stateless session; session won't be used to store user's
                 // state.

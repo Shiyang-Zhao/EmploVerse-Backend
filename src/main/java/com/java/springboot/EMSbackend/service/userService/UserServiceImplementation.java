@@ -107,7 +107,7 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 			user.setFirstName(userDto.getFirstName());
 			user.setLastName(userDto.getLastName());
 			user.setUsername(userDto.getUsername());
-			user.setEmail((userDto.getEmail()));
+			user.setEmail(userDto.getEmail());
 			// user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 			user.setPhoneNumber(userDto.getPhoneNumber());
 			// if (userDto.getPassword1() == userDto.getPassword2()) {
@@ -116,6 +116,7 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 			// } else {
 			// throw new IllegalArgumentException("Passwords do not match");
 			// }
+			userRepository.save(user);
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to update user: " + e.getMessage());
 		}
