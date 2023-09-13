@@ -64,7 +64,6 @@ public class EmployeeServiceImplementation implements EmployeeService {
 
 	private void updateEmployee(Employee employee, EmployeeDto employeeDto) {
 		try {
-			employeeDto.getPersonalInfo().setSsn(passwordEncoder.encode(employeeDto.getPersonalInfo().getSsn()));
 			employee.setUser(employeeDto.getUser());
 			employee.setPersonalInfo(employeeDto.getPersonalInfo());
 			employee.setEmployeeInfo(employeeDto.getEmployeeInfo());
