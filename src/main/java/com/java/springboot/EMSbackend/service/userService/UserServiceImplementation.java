@@ -188,7 +188,7 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 			String sortDir) {
 		try {
 			List<User> allUsers = getAllUsers();
-			// Apply sorting if applicable
+			
 			if (sortField != null && !sortField.isEmpty()) {
 				Function<User, String> getter = createFieldToGetterMap(sortField);
 

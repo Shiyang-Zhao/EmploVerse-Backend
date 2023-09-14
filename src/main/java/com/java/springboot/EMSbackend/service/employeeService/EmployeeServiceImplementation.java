@@ -143,7 +143,7 @@ public class EmployeeServiceImplementation implements EmployeeService {
 	public List<Employee> searchEmployees(String keyword, String searchField) {
 		try {
 			List<Employee> allEmployeesList = getAllEmployees();
-			String lowercaseKeyword = keyword.toLowerCase(); // Convert the keyword to lowercase
+			String lowercaseKeyword = keyword.toLowerCase();
 
 			if (keyword.isEmpty()) {
 				return new ArrayList<>();
