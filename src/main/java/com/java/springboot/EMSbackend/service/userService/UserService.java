@@ -36,7 +36,7 @@ public interface UserService {
 
     void deleteUserByEmail(String email);
 
-    Page<User> getPaginatedUsers(List<User> userList, int pageNo, int pageSize, String sortField,
+    Page<User> getPaginatedUsers(int pageNo, int pageSize, String sortField,
             String sortDir);
 
     List<User> searchUsers(String keyword, String searchField);

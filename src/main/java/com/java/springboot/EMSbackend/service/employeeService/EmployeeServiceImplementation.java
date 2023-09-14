@@ -91,7 +91,7 @@ public class EmployeeServiceImplementation implements EmployeeService {
 		}
 	}
 
-	private Function<Employee, String> createFieldToGetterMap(String searchField) {
+	private Function<Employee, String> createFieldToGetterMap(String field) {
 		Map<String, Function<Employee, String>> fieldToGetterMap = new HashMap<>();
 		fieldToGetterMap.put("id", employee -> String.valueOf(employee.getId()));
 		fieldToGetterMap.put("firstName", employee -> employee.getUser().getFirstName());
@@ -102,12 +102,8 @@ public class EmployeeServiceImplementation implements EmployeeService {
 		fieldToGetterMap.put("jobTitles", employee -> employee.getEmployeeInfo().getJobTitles());
 		fieldToGetterMap.put("department", employee -> employee.getEmployeeInfo().getDepartment());
 		fieldToGetterMap.put("manager", employee -> employee.getEmployeeInfo().getManager());
-		
-		if (searchField.equals("id")) {
-			return employee -> String.valueOf(employee.getId());
-		}
 
-		return fieldToGetterMap.get(searchField);
+		return fieldToGetterMap.get(field);
 	}
 
 	@Override
@@ -119,7 +115,13 @@ public class EmployeeServiceImplementation implements EmployeeService {
 				Function<Employee, String> getter = createFieldToGetterMap(sortField);
 
 				if (getter != null) {
-					Comparator<Employee> comparator = Comparator.comparing(getter);
+					Comparator<Employee> comparator;
+					if ("id".equals(sortField)) {
+						comparator = Comparator.comparingLong(employee -> employee.getId());
+					} else {
+						comparator = Comparator.comparing(getter);
+					}
+
 					if ("desc".equalsIgnoreCase(sortDir)) {
 						comparator = comparator.reversed();
 					}

@@ -171,7 +171,7 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 		}
 	}
 
-	private Function<User, String> createFieldToGetterMap(String searchField) {
+	private Function<User, String> createFieldToGetterMap(String field) {
 		Map<String, Function<User, String>> fieldToGetterMap = new HashMap<>();
 		fieldToGetterMap.put("id", user -> String.valueOf(user.getId()));
 		fieldToGetterMap.put("firstName", user -> user.getFirstName());
@@ -179,34 +179,37 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 		fieldToGetterMap.put("username", user -> user.getUsername());
 		fieldToGetterMap.put("email", user -> user.getEmail());
 		fieldToGetterMap.put("phoneNumber", user -> user.getPhoneNumber());
-		
-		if (searchField.equals("id")) {
-			return employee -> String.valueOf(employee.getId());
-		}
 
-		return fieldToGetterMap.get(searchField);
+		return fieldToGetterMap.get(field);
 	}
 
 	@Override
-	public Page<User> getPaginatedUsers(List<User> userList, int pageNo, int pageSize, String sortField,
+	public Page<User> getPaginatedUsers(int pageNo, int pageSize, String sortField,
 			String sortDir) {
 		try {
+			List<User> allUsers = getAllUsers();
 			// Apply sorting if applicable
 			if (sortField != null && !sortField.isEmpty()) {
 				Function<User, String> getter = createFieldToGetterMap(sortField);
 
 				if (getter != null) {
-					Comparator<User> comparator = Comparator.comparing(getter);
+					Comparator<User> comparator;
+					if ("id".equals(sortField)) {
+						comparator = Comparator.comparingLong(user -> user.getId());
+					} else {
+						comparator = Comparator.comparing(getter);
+					}
+
 					if ("desc".equalsIgnoreCase(sortDir)) {
 						comparator = comparator.reversed();
 					}
-					userList.sort(comparator);
+					allUsers.sort(comparator);
 				}
 			}
 			int fromIndex = (pageNo - 1) * pageSize;
-			int toIndex = Math.min(fromIndex + pageSize, userList.size());
-			List<User> paginatedUsers = userList.subList(fromIndex, toIndex);
-			return new PageImpl<>(paginatedUsers, PageRequest.of(pageNo - 1, pageSize), userList.size());
+			int toIndex = Math.min(fromIndex + pageSize, allUsers.size());
+			List<User> paginatedUsers = allUsers.subList(fromIndex, toIndex);
+			return new PageImpl<>(paginatedUsers, PageRequest.of(pageNo - 1, pageSize), allUsers.size());
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to retrieve paginated users: " + e.getMessage());
 		}

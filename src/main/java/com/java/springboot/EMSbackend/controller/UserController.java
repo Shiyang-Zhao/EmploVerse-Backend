@@ -150,13 +150,13 @@ public class UserController {
 
 	@GetMapping("/page/{pageNo}")
 	@PreAuthorize("hasAnyRole('ADMIN')")
-	public ResponseEntity<Map<String, Object>> getPaginatedUsers(@RequestBody List<User> users,
+	public ResponseEntity<Map<String, Object>> getPaginatedUsers(
 			@PathVariable(value = "pageNo") int pageNo,
 			@RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
 			@RequestParam(value = "sortField", required = false, defaultValue = "id") String sortField,
 			@RequestParam(value = "sortDir", required = false, defaultValue = "asc") String sortDir) {
 
-		Page<User> page = userService.getPaginatedUsers(users, pageNo, pageSize, sortField, sortDir);
+		Page<User> page = userService.getPaginatedUsers(pageNo, pageSize, sortField, sortDir);
 
 		Map<String, Object> response = new HashMap<>();
 		response.put("currentPage", pageNo);
