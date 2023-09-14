@@ -2,6 +2,7 @@ package com.java.springboot.EMSbackend.service.employeeService;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -89,25 +91,6 @@ public class EmployeeServiceImplementation implements EmployeeService {
 		}
 	}
 
-	@Override
-	public Page<Employee> getPaginatedEmployees(int pageNo, int pageSize, String sortField,
-			String sortDir) {
-		try {
-			Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending()
-					: Sort.by(sortField).descending();
-
-			Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
-			// int startIndex = (int) pageable.getOffset();
-			// int endIndex = Math.min(startIndex + pageable.getPageSize(),
-			// employeeList.size());
-			// List<Employee> paginatedList = employeeList.subList(startIndex, endIndex);
-			return employeeRepository.findAll(pageable);
-		} catch (Exception e) {
-			// Handle any exceptions thrown during paginated employee retrieval
-			throw new RuntimeException("Failed to retrieve paginated employees: " + e.getMessage());
-		}
-	}
-
 	private Function<Employee, String> createFieldToGetterMap(String searchField) {
 		Map<String, Function<Employee, String>> fieldToGetterMap = new HashMap<>();
 		fieldToGetterMap.put("id", employee -> String.valueOf(employee.getId()));
@@ -119,8 +102,39 @@ public class EmployeeServiceImplementation implements EmployeeService {
 		fieldToGetterMap.put("jobTitles", employee -> employee.getEmployeeInfo().getJobTitles());
 		fieldToGetterMap.put("department", employee -> employee.getEmployeeInfo().getDepartment());
 		fieldToGetterMap.put("manager", employee -> employee.getEmployeeInfo().getManager());
+		
+		if (searchField.equals("id")) {
+			return employee -> String.valueOf(employee.getId());
+		}
 
 		return fieldToGetterMap.get(searchField);
+	}
+
+	@Override
+	public Page<Employee> getPaginatedEmployees(int pageNo, int pageSize, String sortField, String sortDir) {
+		try {
+			List<Employee> allEmployees = getAllEmployees();
+
+			if (sortField != null && !sortField.isEmpty()) {
+				Function<Employee, String> getter = createFieldToGetterMap(sortField);
+
+				if (getter != null) {
+					Comparator<Employee> comparator = Comparator.comparing(getter);
+					if ("desc".equalsIgnoreCase(sortDir)) {
+						comparator = comparator.reversed();
+					}
+					allEmployees.sort(comparator);
+				}
+			}
+
+			int fromIndex = (pageNo - 1) * pageSize;
+			int toIndex = Math.min(fromIndex + pageSize, allEmployees.size());
+			List<Employee> paginatedEmployees = allEmployees.subList(fromIndex, toIndex);
+
+			return new PageImpl<>(paginatedEmployees, PageRequest.of(pageNo - 1, pageSize), allEmployees.size());
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to retrieve paginated employees: " + e.getMessage());
+		}
 	}
 
 	@Override
@@ -130,15 +144,13 @@ public class EmployeeServiceImplementation implements EmployeeService {
 			String lowercaseKeyword = keyword.toLowerCase(); // Convert the keyword to lowercase
 
 			if (keyword.isEmpty()) {
-				// If the search keyword is empty, return all employees using findPaginated
-				// method
 				return new ArrayList<>();
 			}
 
 			Function<Employee, String> getter = createFieldToGetterMap(searchField);
 
 			if (getter == null) {
-				throw new IllegalArgumentException("Invalid searchField: " + searchField);
+				throw new IllegalArgumentException("Invalid search field: " + searchField);
 			}
 
 			// Define a predicate to filter employees based on the keyword and search field

@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -170,24 +171,6 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 		}
 	}
 
-	@Override
-	public Page<User> getPaginatedUsers(List<User> userList, int pageNo, int pageSize, String sortField,
-			String sortDir) {
-		try {
-			Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending()
-					: Sort.by(sortField).descending();
-
-			Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
-			int startIndex = (pageNo - 1) * pageSize;
-			int endIndex = Math.min(startIndex + pageable.getPageSize(), userList.size());
-			List<User> paginatedList = userList.subList(startIndex, endIndex);
-			return new PageImpl<>(paginatedList, pageable, userList.size());
-		} catch (Exception e) {
-			// Handle any exceptions thrown during paginated user retrieval
-			throw new RuntimeException("Failed to retrieve paginated users: " + e.getMessage());
-		}
-	}
-
 	private Function<User, String> createFieldToGetterMap(String searchField) {
 		Map<String, Function<User, String>> fieldToGetterMap = new HashMap<>();
 		fieldToGetterMap.put("id", user -> String.valueOf(user.getId()));
@@ -196,8 +179,37 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 		fieldToGetterMap.put("username", user -> user.getUsername());
 		fieldToGetterMap.put("email", user -> user.getEmail());
 		fieldToGetterMap.put("phoneNumber", user -> user.getPhoneNumber());
+		
+		if (searchField.equals("id")) {
+			return employee -> String.valueOf(employee.getId());
+		}
 
 		return fieldToGetterMap.get(searchField);
+	}
+
+	@Override
+	public Page<User> getPaginatedUsers(List<User> userList, int pageNo, int pageSize, String sortField,
+			String sortDir) {
+		try {
+			// Apply sorting if applicable
+			if (sortField != null && !sortField.isEmpty()) {
+				Function<User, String> getter = createFieldToGetterMap(sortField);
+
+				if (getter != null) {
+					Comparator<User> comparator = Comparator.comparing(getter);
+					if ("desc".equalsIgnoreCase(sortDir)) {
+						comparator = comparator.reversed();
+					}
+					userList.sort(comparator);
+				}
+			}
+			int fromIndex = (pageNo - 1) * pageSize;
+			int toIndex = Math.min(fromIndex + pageSize, userList.size());
+			List<User> paginatedUsers = userList.subList(fromIndex, toIndex);
+			return new PageImpl<>(paginatedUsers, PageRequest.of(pageNo - 1, pageSize), userList.size());
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to retrieve paginated users: " + e.getMessage());
+		}
 	}
 
 	@Override
