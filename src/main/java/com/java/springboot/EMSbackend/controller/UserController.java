@@ -30,7 +30,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 // @CrossOrigin(origins = { "http://localhost:3000",
-// 		"http://emploverse-frontend.herokuapp.com/" }, allowCredentials = "true")
+// "http://emploverse-frontend.herokuapp.com/" }, allowCredentials = "true")
 @RequestMapping("/users")
 public class UserController {
 
@@ -85,16 +85,18 @@ public class UserController {
 
 	// @GetMapping("/getUserByUsername/{username}")
 	// @PreAuthorize("hasAnyRole('ADMIN')")
-	// public ResponseEntity<User> getUserByUsername(@PathVariable(value = "username") String username) {
-	// 	User user = userService.getUserByUsername(username);
-	// 	return ResponseEntity.ok(user);
+	// public ResponseEntity<User> getUserByUsername(@PathVariable(value =
+	// "username") String username) {
+	// User user = userService.getUserByUsername(username);
+	// return ResponseEntity.ok(user);
 	// }
 
 	// @GetMapping("/getUserByEmail/{email}")
 	// @PreAuthorize("hasAnyRole('ADMIN')")
-	// public ResponseEntity<User> getUserByEmail(@PathVariable(value = "email") String email) {
-	// 	User user = userService.getUserByEmail(email);
-	// 	return ResponseEntity.ok(user);
+	// public ResponseEntity<User> getUserByEmail(@PathVariable(value = "email")
+	// String email) {
+	// User user = userService.getUserByEmail(email);
+	// return ResponseEntity.ok(user);
 	// }
 
 	// Update user APIs
@@ -108,18 +110,20 @@ public class UserController {
 
 	// @PostMapping("/updateUserByUsername/{username}")
 	// @PreAuthorize("hasAnyRole('ADMIN')")
-	// public ResponseEntity<String> updateUserByUsername(@PathVariable(value = "username") String username,
-	// 		@RequestBody UserDto userDto) {
-	// 	userService.updateUserByUsername(username, userDto);
-	// 	return ResponseEntity.ok("User is updated successfully!!!");
+	// public ResponseEntity<String> updateUserByUsername(@PathVariable(value =
+	// "username") String username,
+	// @RequestBody UserDto userDto) {
+	// userService.updateUserByUsername(username, userDto);
+	// return ResponseEntity.ok("User is updated successfully!!!");
 	// }
 
 	// @PostMapping("/updateUserByEmail/{email}")
 	// @PreAuthorize("hasAnyRole('ADMIN')")
-	// public ResponseEntity<String> updateUserByEmail(@PathVariable(value = "email") String email,
-	// 		@RequestBody UserDto userDto) {
-	// 	userService.updateUserByEmail(email, userDto);
-	// 	return ResponseEntity.ok("User is updated successfully!!!");
+	// public ResponseEntity<String> updateUserByEmail(@PathVariable(value =
+	// "email") String email,
+	// @RequestBody UserDto userDto) {
+	// userService.updateUserByEmail(email, userDto);
+	// return ResponseEntity.ok("User is updated successfully!!!");
 	// }
 
 	// Delete user APIs
@@ -148,9 +152,10 @@ public class UserController {
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	public ResponseEntity<Map<String, Object>> getPaginatedUsers(@RequestBody List<User> users,
 			@PathVariable(value = "pageNo") int pageNo,
+			@RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
 			@RequestParam(value = "sortField", required = false, defaultValue = "id") String sortField,
 			@RequestParam(value = "sortDir", required = false, defaultValue = "asc") String sortDir) {
-		int pageSize = 3;
+
 		Page<User> page = userService.getPaginatedUsers(users, pageNo, pageSize, sortField, sortDir);
 
 		Map<String, Object> response = new HashMap<>();

@@ -78,9 +78,9 @@ public class EmployeeController {
 	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
 	public ResponseEntity<Map<String, Object>> getPaginatedEmployees(
 			@PathVariable(value = "pageNo") int pageNo,
+			@RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
 			@RequestParam(value = "sortField", required = false, defaultValue = "id") String sortField,
 			@RequestParam(value = "sortDir", required = false, defaultValue = "asc") String sortDir) {
-		int pageSize = 3;
 		Page<Employee> page = employeeService.getPaginatedEmployees(pageNo, pageSize, sortField, sortDir);
 
 		Map<String, Object> response = new HashMap<>();
