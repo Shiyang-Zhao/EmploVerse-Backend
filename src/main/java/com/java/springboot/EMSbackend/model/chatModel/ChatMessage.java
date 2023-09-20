@@ -24,7 +24,7 @@ public class ChatMessage {
     private Long id;
 
     @ManyToOne
-    private User sender; // Assuming a User entity exists
+    private User sender;
 
     private String content;
 
