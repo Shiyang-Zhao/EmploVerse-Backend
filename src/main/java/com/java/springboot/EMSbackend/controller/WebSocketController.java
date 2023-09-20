@@ -38,7 +38,7 @@ public class WebSocketController {
     public void handleMessage(@DestinationVariable String room, ChatMessage message) {
         String destination = "/topic/" + room;
 
-        messagingTemplate.convertAndSend(destination, new MessageResponse(message.getContent()));
+        messagingTemplate.convertAndSend(destination, message.getContent());
     }
 
     @SubscribeMapping("/chat/join/{room}")
@@ -49,7 +49,7 @@ public class WebSocketController {
         userRoomMap.put(SecurityContextHolder.getContext().getAuthentication().getName(), room);
 
         // Send a welcome message or perform any other necessary actions
-        messagingTemplate.convertAndSend(destination, new MessageResponse("Welcome to room " + room));
+        messagingTemplate.convertAndSend(destination, "Welcome to room " + room);
     }
 
     @MessageMapping("/hello")
