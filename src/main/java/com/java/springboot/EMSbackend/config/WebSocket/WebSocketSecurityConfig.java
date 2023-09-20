@@ -53,7 +53,7 @@ public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/toClient");
+        config.enableSimpleBroker("/toClient", "/queue");
         config.setApplicationDestinationPrefixes("/toServer");
     }
 

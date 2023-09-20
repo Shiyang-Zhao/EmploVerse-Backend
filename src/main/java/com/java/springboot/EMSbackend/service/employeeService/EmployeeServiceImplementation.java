@@ -20,7 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.java.springboot.EMSbackend.dto.EmployeeDto.EmployeeDto;
-import com.java.springboot.EMSbackend.dto.EmployeeDto.SalaryDto;
+// import com.java.springboot.EMSbackend.dto.EmployeeDto.SalaryDto;
 import com.java.springboot.EMSbackend.model.employeeModel.Employee;
 import com.java.springboot.EMSbackend.model.employeeModel.SalaryInfo;
 import com.java.springboot.EMSbackend.repository.EmployeeRepository;
@@ -191,40 +191,40 @@ public class EmployeeServiceImplementation implements EmployeeService {
 	// }
 	// }
 
-	public void setSalaryDetails(SalaryInfo salaryInfo, SalaryDto salaryDto) {
-		salaryInfo.setAmount(salaryDto.getAmount());
-		salaryInfo.setPayFrequency(salaryDto.getPayFrequency());
-		salaryInfo.setBonus(salaryDto.getBonus());
-		salaryInfo.setTaxDeduction(salaryDto.getTaxDeduction());
-		salaryInfo.setOvertimeHours(salaryDto.getOvertimeHours());
-		salaryInfo.setOvertimeRate(salaryDto.getOvertimeRate());
-		salaryInfo.setDeductions(salaryDto.getDeductions());
-		salaryInfo.setInsuranceCoverage(salaryDto.getInsuranceCoverage());
-	}
+	// public void setSalaryDetails(SalaryInfo salaryInfo, SalaryDto salaryDto) {
+	// salaryInfo.setAmount(salaryDto.getAmount());
+	// salaryInfo.setPayFrequency(salaryDto.getPayFrequency());
+	// salaryInfo.setBonus(salaryDto.getBonus());
+	// salaryInfo.setTaxDeduction(salaryDto.getTaxDeduction());
+	// salaryInfo.setOvertimeHours(salaryDto.getOvertimeHours());
+	// salaryInfo.setOvertimeRate(salaryDto.getOvertimeRate());
+	// salaryInfo.setDeductions(salaryDto.getDeductions());
+	// salaryInfo.setInsuranceCoverage(salaryDto.getInsuranceCoverage());
+	// }
 
-	@Override
-	public BigDecimal setNetSalaryById(long id, SalaryDto salaryDto) {
-		Employee employee = getEmployeeById(id);
-		SalaryInfo salaryInfo = employee.getEmployeeInfo().getSalaryInfo();
-		setSalaryDetails(salaryInfo, salaryDto);
-		// Set the values from the SalaryDTO to the SalaryInfo object
+	// @Override
+	// public BigDecimal setNetSalaryById(long id, SalaryDto salaryDto) {
+	// Employee employee = getEmployeeById(id);
+	// SalaryInfo salaryInfo = employee.getEmployeeInfo().getSalaryInfo();
+	// setSalaryDetails(salaryInfo, salaryDto);
+	// // Set the values from the SalaryDTO to the SalaryInfo object
 
-		BigDecimal baseSalary = salaryInfo.getAmount();
-		BigDecimal bonusAmount = salaryInfo.getBonus();
-		BigDecimal taxDeductionAmount = salaryInfo.getTaxDeduction();
-		double overtimeHours = salaryInfo.getOvertimeHours();
-		double overtimeRate = salaryInfo.getOvertimeRate();
+	// BigDecimal baseSalary = salaryInfo.getAmount();
+	// BigDecimal bonusAmount = salaryInfo.getBonus();
+	// BigDecimal taxDeductionAmount = salaryInfo.getTaxDeduction();
+	// double overtimeHours = salaryInfo.getOvertimeHours();
+	// double overtimeRate = salaryInfo.getOvertimeRate();
 
-		// Calculate overtime pay
-		BigDecimal overtimePay = BigDecimal.valueOf(overtimeHours * overtimeRate);
+	// // Calculate overtime pay
+	// BigDecimal overtimePay = BigDecimal.valueOf(overtimeHours * overtimeRate);
 
-		// Calculate gross salary
-		BigDecimal grossSalary = baseSalary.add(bonusAmount).add(overtimePay);
+	// // Calculate gross salary
+	// BigDecimal grossSalary = baseSalary.add(bonusAmount).add(overtimePay);
 
-		// Calculate net salary after tax deductions
-		BigDecimal netSalary = grossSalary.subtract(taxDeductionAmount);
+	// // Calculate net salary after tax deductions
+	// BigDecimal netSalary = grossSalary.subtract(taxDeductionAmount);
 
-		return netSalary;
-	}
+	// return netSalary;
+	// }
 
 }

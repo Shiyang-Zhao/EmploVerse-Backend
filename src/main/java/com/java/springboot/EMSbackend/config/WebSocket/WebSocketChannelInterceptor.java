@@ -30,18 +30,19 @@ public class WebSocketChannelInterceptor implements ChannelInterceptor {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
         // Check if this is a CONNECT message (WebSocket handshake)
-        if (StompCommand.CONNECT == accessor.getCommand() || StompCommand.SUBSCRIBE == accessor.getCommand() || StompCommand.SEND == accessor.getCommand()) {
+        if (StompCommand.CONNECT == accessor.getCommand() || StompCommand.SUBSCRIBE == accessor.getCommand()
+                || StompCommand.SEND == accessor.getCommand()) {
             // Extract the JWT token from the headers
             String jwt = accessor.getFirstNativeHeader("Authorization").substring(7);
 
             if (jwt != null && !jwt.isEmpty() && !jwtTokenUtil.isTokenExpired(jwt)
                     && !jwtTokenUtil.isTokenBlacklisted(jwt)) {
-                logger.info("JWT IS GOod");
+                logger.info("Valid Jwt");
                 return message;
             }
         }
         logger.info(accessor.getCommand().toString());
-        logger.info("Error");
+        logger.info("Jwt is invalid");
         return null;
     }
 

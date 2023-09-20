@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.java.springboot.EMSbackend.dto.EmployeeDto.EmployeeDto;
-import com.java.springboot.EMSbackend.dto.EmployeeDto.SalaryDto;
+// import com.java.springboot.EMSbackend.dto.EmployeeDto.SalaryDto;
 import com.java.springboot.EMSbackend.model.employeeModel.Employee;
 import com.java.springboot.EMSbackend.service.employeeService.EmployeeService;
 
 @RestController
 // @CrossOrigin(origins = { "http://localhost:3000",
-// 		"http://emploverse-frontend.herokuapp.com/" }, allowCredentials = "true")
+// "http://emploverse-frontend.herokuapp.com/" }, allowCredentials = "true")
 @RequestMapping("/employees")
 public class EmployeeController {
 
@@ -104,12 +104,14 @@ public class EmployeeController {
 		return ResponseEntity.ok(searchResult);
 	}
 
-	@GetMapping("/setNetSalaryById/{id}")
-	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-	public ResponseEntity<String> getEmployeeNetSalaryById(@PathVariable(value = "id") long id,
-			@RequestBody SalaryDto salaryDto) {
-		BigDecimal netSalary = employeeService.setNetSalaryById(id, salaryDto);
-		String responseMessage = String.format("Salary of employee with id %d: $%f", id, netSalary);
-		return ResponseEntity.ok(responseMessage);
-	}
+	// @GetMapping("/setNetSalaryById/{id}")
+	// @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+	// public ResponseEntity<String> getEmployeeNetSalaryById(@PathVariable(value =
+	// "id") long id,
+	// @RequestBody SalaryDto salaryDto) {
+	// BigDecimal netSalary = employeeService.setNetSalaryById(id, salaryDto);
+	// String responseMessage = String.format("Salary of employee with id %d: $%f",
+	// id, netSalary);
+	// return ResponseEntity.ok(responseMessage);
+	// }
 }
