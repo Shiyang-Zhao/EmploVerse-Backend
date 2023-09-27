@@ -5,12 +5,13 @@ import com.java.springboot.EMSbackend.model.userModel.JwtRequest;
 import com.java.springboot.EMSbackend.model.userModel.User;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public interface JwtService {
 
     User registeUser(UserDto userDto) throws Exception;
 
-    String authenticateUser(JwtRequest authenticationRequest) throws Exception;
+    String authenticateUser(JwtRequest request, HttpServletResponse response) throws Exception;
 
-    String logoutUser(HttpServletRequest request);
+    String logoutUser(HttpServletRequest request, HttpServletResponse response);
 }

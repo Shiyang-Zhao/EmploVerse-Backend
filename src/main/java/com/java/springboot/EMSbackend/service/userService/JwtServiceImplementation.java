@@ -31,7 +31,9 @@ import com.java.springboot.EMSbackend.model.userModel.User;
 import com.java.springboot.EMSbackend.repository.EmployeeRepository;
 import com.java.springboot.EMSbackend.repository.UserRepository;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Service
 public class JwtServiceImplementation implements JwtService {
@@ -112,35 +114,32 @@ public class JwtServiceImplementation implements JwtService {
     }
 
     @Override
-    public String authenticateUser(JwtRequest authenticationRequest) throws Exception {
+    public String authenticateUser(JwtRequest request, HttpServletResponse response)
+            throws Exception {
         try {
-            UserDetails userDetails = userService.loadUserByUsername(authenticationRequest.getUsernameOrEmail());
-            // Assuming the roles in JwtRequest are simple strings (not GrantedAuthority
-            // objects).
-            // Check if all required roles are present in the user's authorities.
+            UserDetails userDetails = userService.loadUserByUsername(request.getUsernameOrEmail());
             Collection<GrantedAuthority> authorities = new ArrayList<>();
-            for (String role : authenticationRequest.getRoles()) {
+            for (String role : request.getRoles()) {
                 authorities.add(new SimpleGrantedAuthority(role));
             }
-
-            // Add logging to see the roles in the JwtRequest and the roles present in
-            // UserDetails
-            System.out.println("JwtRequest roles: " + authenticationRequest.getRoles());
-            System.out.println("UserDetails authorities: " + userDetails.getAuthorities());
-            System.out.println("UserDetails authorities: " + userDetails.getPassword());
-
             // Check if all required roles are present in the user's authorities.
             if (!userDetails.getAuthorities().containsAll(authorities)) {
                 throw new AccessDeniedException("INVALID_ROLE");
             }
-
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                    authenticationRequest.getUsernameOrEmail(),
-                    authenticationRequest.getPassword(),
+                    request.getUsernameOrEmail(),
+                    request.getPassword(),
                     authorities // Pass the authorities directly here
             ));
-            String authMethod = authenticationRequest.getUsernameOrEmail().contains("@") ? "email" : "username";
+            String authMethod = request.getUsernameOrEmail().contains("@") ? "email" : "username";
             final String token = jwtTokenUtil.generateToken(userDetails, authMethod, authorities);
+
+            Cookie cookie = new Cookie("JWT-TOKEN", token);
+            cookie.setHttpOnly(true);
+            cookie.setSecure(true); // send the cookie over HTTPS only
+            cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days expiration
+            cookie.setPath("/");
+            response.addCookie(cookie); // Add the cookie to the response
             return token;
         } catch (DisabledException e) {
             throw new Exception("USER_DISABLED", e);
@@ -150,25 +149,29 @@ public class JwtServiceImplementation implements JwtService {
     }
 
     @Override
-    public String logoutUser(HttpServletRequest request) {
+    public String logoutUser(HttpServletRequest request, HttpServletResponse response) {
         SecurityContextHolder.clearContext();
-        final String requestTokenHeader = request.getHeader("Authorization");
-
-        String jwtToken = null;
-        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-            jwtToken = requestTokenHeader.substring(7);
+        // Retrieve JWT-TOKEN cookie from request
+        String jwtToken = jwtTokenUtil.getJwtFromRequest(request);
+        // If the JWT token exists and is not expired, blacklist it
+        if (jwtToken != null) {
             try {
-                // Check if the token is expired
                 if (jwtTokenUtil.isTokenExpired(jwtToken)) {
-                    return "Token is already expired. No need to logout.";
+                    return "Token is already expired. You have been logged out.";
                 }
+                jwtTokenUtil.blacklistToken(jwtToken);
             } catch (Exception e) {
-                // Handle any potential exceptions related to token parsing or validation
-                // Optionally log the error
                 return "Error validating the token. Please try again or reauthenticate.";
             }
         }
-        jwtTokenUtil.blacklistToken(jwtToken);
+        // Create and set the JWT-TOKEN cookie to expire immediately
+        Cookie cookie = new Cookie("JWT-TOKEN", null);
+        cookie.setMaxAge(0); // immediately expire the cookie
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        response.addCookie(cookie);
         return "Logged out successfully";
     }
+
 }

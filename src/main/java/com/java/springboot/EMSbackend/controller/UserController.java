@@ -27,6 +27,7 @@ import com.java.springboot.EMSbackend.service.userService.JwtService;
 import com.java.springboot.EMSbackend.service.userService.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 // @CrossOrigin(origins = { "http://localhost:3000",
@@ -53,18 +54,20 @@ public class UserController {
 	// User get login info from Admin or Manager to authenticate
 	@PostMapping("/authenticate")
 	// @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
-	public ResponseEntity<?> authenticate(@RequestBody JwtRequest authenticationRequest) throws Exception {
-		String token = jwtService.authenticateUser(authenticationRequest);
+	public ResponseEntity<?> authenticate(@RequestBody JwtRequest request,
+			HttpServletResponse response)
+			throws Exception {
+		String token = jwtService.authenticateUser(request, response);
 		return ResponseEntity
-				.ok(new JwtResponse(token, authenticationRequest.getRoles()));
+				.ok(new JwtResponse(token, request.getRoles()));
 	}
 
 	// Only authenticated accounts can log out
 	@PostMapping("/logout")
 	// @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
-	public ResponseEntity<String> logout(HttpServletRequest request) {
-		jwtService.logoutUser(request);
-		return ResponseEntity.ok("User is logged out successfully!");
+	public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
+		String result = jwtService.logoutUser(request, response);
+		return ResponseEntity.ok(result);
 	}
 
 	// APIs for admin page
