@@ -62,12 +62,18 @@ public class UserController {
 				.ok(new JwtResponse(token, request.getRoles()));
 	}
 
+	@GetMapping("/checkAuth")
+	public ResponseEntity<String> checkAuth(HttpServletRequest request) throws Exception {
+		String message = jwtService.checkAuth(request);
+		return ResponseEntity.ok(message);
+	}
+
 	// Only authenticated accounts can log out
 	@PostMapping("/logout")
 	// @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
 	public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		String result = jwtService.logoutUser(request, response);
-		return ResponseEntity.ok(result);
+		String message = jwtService.logoutUser(request, response);
+		return ResponseEntity.ok(message);
 	}
 
 	// APIs for admin page
