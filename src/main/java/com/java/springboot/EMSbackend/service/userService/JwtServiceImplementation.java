@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -134,7 +135,7 @@ public class JwtServiceImplementation implements JwtService {
             String authMethod = request.getUsernameOrEmail().contains("@") ? "email" : "username";
             final String token = jwtTokenUtil.generateToken(userDetails, authMethod, authorities);
 
-            Cookie cookie = new Cookie("JWT-TOKEN", token);
+            Cookie cookie = new Cookie("jwt", token);
             cookie.setHttpOnly(true);
             cookie.setSecure(true); // send the cookie over HTTPS only
             cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days expiration
@@ -149,29 +150,53 @@ public class JwtServiceImplementation implements JwtService {
     }
 
     @Override
-    public String logoutUser(HttpServletRequest request, HttpServletResponse response) {
+    public String checkAuth(HttpServletRequest request) throws Exception {
+        try {
+            String jwt = jwtTokenUtil.getJwtFromRequest(request);
+            if (jwt == null || jwt.isEmpty()) {
+                throw new Exception("No JWT found in the request.");
+            }
+            String username = jwtTokenUtil.getUsernameFromToken(jwt);
+            if (username == null || username.isEmpty()) {
+                throw new Exception("Invalid JWT token.");
+            }
+
+            UserDetails userDetails = userService.loadUserByUsername(username);
+
+            if (!jwtTokenUtil.validateToken(jwt, userDetails)) {
+                throw new Exception("Token validation failed.");
+            }
+            return "User " + username + " is authenticated.";
+        } catch (Exception e) {
+            throw new Exception("Failed to check authentication: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public String logoutUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
         SecurityContextHolder.clearContext();
-        // Retrieve JWT-TOKEN cookie from request
-        String jwtToken = jwtTokenUtil.getJwtFromRequest(request);
-        // If the JWT token exists and is not expired, blacklist it
-        if (jwtToken != null) {
-            try {
+
+        try {
+            // Retrieve jwt cookie from request
+            String jwtToken = jwtTokenUtil.getJwtFromRequest(request);
+            // If the JWT token exists and is not expired, blacklist it
+            if (jwtToken != null) {
+
                 if (jwtTokenUtil.isTokenExpired(jwtToken)) {
                     return "Token is already expired. You have been logged out.";
                 }
                 jwtTokenUtil.blacklistToken(jwtToken);
-            } catch (Exception e) {
-                return "Error validating the token. Please try again or reauthenticate.";
             }
+            // Create and set the jwt cookie to expire immediately
+            Cookie cookie = new Cookie("jwt", null);
+            cookie.setMaxAge(0);
+            cookie.setHttpOnly(true);
+            cookie.setSecure(true);
+            cookie.setPath("/");
+            response.addCookie(cookie);
+            return "Logged out successfully";
+        } catch (Exception e) {
+            throw new Exception("Failed to log out the user: " + e.getMessage());
         }
-        // Create and set the JWT-TOKEN cookie to expire immediately
-        Cookie cookie = new Cookie("JWT-TOKEN", null);
-        cookie.setMaxAge(0); // immediately expire the cookie
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        response.addCookie(cookie);
-        return "Logged out successfully";
     }
-
 }

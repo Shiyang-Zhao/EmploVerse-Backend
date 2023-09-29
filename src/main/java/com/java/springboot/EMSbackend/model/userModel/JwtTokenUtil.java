@@ -122,7 +122,7 @@ public class JwtTokenUtil implements Serializable {
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
 			for (Cookie cookie : cookies) {
-				if ("JWT-TOKEN".equals(cookie.getName())) {
+				if ("jwt".equals(cookie.getName())) {
 					return cookie.getValue();
 				}
 			}

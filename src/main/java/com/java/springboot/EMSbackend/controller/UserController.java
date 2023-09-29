@@ -65,7 +65,7 @@ public class UserController {
 	// Only authenticated accounts can log out
 	@PostMapping("/logout")
 	// @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
-	public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
+	public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String result = jwtService.logoutUser(request, response);
 		return ResponseEntity.ok(result);
 	}

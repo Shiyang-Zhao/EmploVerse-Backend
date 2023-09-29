@@ -13,5 +13,7 @@ public interface JwtService {
 
     String authenticateUser(JwtRequest request, HttpServletResponse response) throws Exception;
 
-    String logoutUser(HttpServletRequest request, HttpServletResponse response);
+    String checkAuth(HttpServletRequest request) throws Exception;
+
+    String logoutUser(HttpServletRequest request, HttpServletResponse response) throws Exception;
 }
