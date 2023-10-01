@@ -1,0 +1,8 @@
+# .slugignore
+
+# Exclude .jdk directory
+/app/.jdk
+
+# Other directories or files to exclude (if any)
+# /path/to/other/directory
+# filename.ext
