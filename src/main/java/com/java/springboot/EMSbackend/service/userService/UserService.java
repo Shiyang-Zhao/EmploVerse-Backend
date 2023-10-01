@@ -14,6 +14,8 @@ public interface UserService {
 
     UserDetails loadUserByUsername(String username);
 
+    String uploadProfileImageToS3(UserDto userDto) throws Exception;
+
     List<User> getAllUsers();
 
     User getUserById(long id);

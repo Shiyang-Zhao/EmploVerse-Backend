@@ -1,6 +1,8 @@
 package com.java.springboot.EMSbackend.service.userService;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -35,6 +37,7 @@ import com.java.springboot.EMSbackend.model.employeeModel.Employee;
 import com.java.springboot.EMSbackend.model.userModel.User;
 import com.java.springboot.EMSbackend.repository.EmployeeRepository;
 import com.java.springboot.EMSbackend.repository.UserRepository;
+import com.java.springboot.EMSbackend.service.S3Service.S3Service;
 
 @Service
 public class UserServiceImplementation implements UserService, UserDetailsService {
@@ -44,18 +47,24 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 	@Value("${empverse.base-image-dir}")
 	private String baseProfileImageDir;
 
+	@Value("${empverse.default-image-path}")
+	private String defaultProfileImagePath;
+
 	private final BCryptPasswordEncoder passwordEncoder;
 
 	private final UserRepository userRepository;
 
 	private final EmployeeRepository employeeRepository;
 
+	private final S3Service s3Service;
+
 	@Autowired
 	public UserServiceImplementation(BCryptPasswordEncoder passwordEncoder, UserRepository userRepository,
-			EmployeeRepository employeeRepository) {
+			EmployeeRepository employeeRepository, S3Service s3Service) {
 		this.passwordEncoder = passwordEncoder;
 		this.userRepository = userRepository;
 		this.employeeRepository = employeeRepository;
+		this.s3Service = s3Service;
 	}
 
 	// Map roles to Authorities
@@ -67,6 +76,31 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 		return new org.springframework.security.core.userdetails.User(usernameOrEmail, user.getPassword(),
 				user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getName()))
 						.collect(Collectors.toList()));
+	}
+
+	@Override
+	public String uploadProfileImageToS3(UserDto userDto) {
+		try {
+			MultipartFile profileImage = userDto.getProfileImage();
+
+			if (profileImage == null || profileImage.isEmpty()) {
+				return defaultProfileImagePath; // return default if no image provided
+			}
+
+			String originalFilename = profileImage.getOriginalFilename();
+			String fileExtension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+			String filename = UUID.randomUUID().toString() + "." + fileExtension;
+			String s3Path = userDto.getUsername() + "/" + filename;
+
+			try (InputStream inputStream = profileImage.getInputStream()) {
+				s3Service.uploadFile(s3Path, inputStream);
+			}
+
+			return baseProfileImageDir + s3Path;
+
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to upload profile image to S3", e);
+		}
 	}
 
 	@Override

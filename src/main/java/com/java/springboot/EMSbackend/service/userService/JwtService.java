@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public interface JwtService {
 
-    User registeUser(UserDto userDto) throws Exception;
+    User registerUser(UserDto userDto) throws Exception;
 
     String authenticateUser(JwtRequest request, HttpServletResponse response) throws Exception;
 
