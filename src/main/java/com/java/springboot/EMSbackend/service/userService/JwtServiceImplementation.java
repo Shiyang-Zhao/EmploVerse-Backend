@@ -1,20 +1,11 @@
 package com.java.springboot.EMSbackend.service.userService;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.AccessDeniedException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -25,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.java.springboot.EMSbackend.dto.UserDto.UserDto;
 import com.java.springboot.EMSbackend.model.userModel.JwtRequest;
@@ -41,8 +31,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Service
 public class JwtServiceImplementation implements JwtService {
-
-    // Define the base directory to store profile images
 
     @Value("${empverse.base-image-dir}")
     private String baseProfileImageDir;
@@ -61,8 +49,6 @@ public class JwtServiceImplementation implements JwtService {
 
     private final UserRepository userRepository;
 
-    private final S3Service s3Service;
-
     @Autowired
     public JwtServiceImplementation(
             BCryptPasswordEncoder passwordEncoder,
@@ -70,26 +56,22 @@ public class JwtServiceImplementation implements JwtService {
             AuthenticationManager authenticationManager,
             UserService userService,
             UserRepository userRepository,
-            EmployeeRepository employeeRepository, S3Service s3Service) {
+            EmployeeRepository employeeRepository) {
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenUtil = jwtTokenUtil;
         this.authenticationManager = authenticationManager;
         this.userService = userService;
         this.userRepository = userRepository;
-        this.s3Service = s3Service;
     }
 
     @Override
     public User registerUser(UserDto userDto) throws Exception {
-        // Validate passwords
         if (!userDto.getPassword1().equals(userDto.getPassword2())) {
             throw new IllegalArgumentException("Passwords do not match");
         }
 
-        // Handle profile image upload and storage
         String profileImagePath = userService.uploadProfileImageToS3(userDto);
 
-        // Create and save the new user
         User newUser = new User(userDto.getFirstName(), userDto.getLastName(), userDto.getUsername(),
                 userDto.getEmail(), passwordEncoder.encode(userDto.getPassword1()),
                 userDto.getPhoneNumber(), profileImagePath, userDto.getRoles());

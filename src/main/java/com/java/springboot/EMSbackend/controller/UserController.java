@@ -48,7 +48,7 @@ public class UserController {
 	@PostMapping("/register")
 	// @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
 	public ResponseEntity<?> register(@ModelAttribute UserDto userDto) throws Exception {
-		return ResponseEntity.ok(jwtService.registeUser(userDto));
+		return ResponseEntity.ok(jwtService.registerUser(userDto));
 	}
 
 	// User get login info from Admin or Manager to authenticate

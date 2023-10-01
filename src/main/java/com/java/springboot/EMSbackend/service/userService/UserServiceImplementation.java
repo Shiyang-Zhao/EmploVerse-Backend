@@ -1,7 +1,6 @@
 package com.java.springboot.EMSbackend.service.userService;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,8 +40,6 @@ import com.java.springboot.EMSbackend.service.S3Service.S3Service;
 
 @Service
 public class UserServiceImplementation implements UserService, UserDetailsService {
-
-	// Define the base directory to store profile images
 
 	@Value("${empverse.base-image-dir}")
 	private String baseProfileImageDir;
