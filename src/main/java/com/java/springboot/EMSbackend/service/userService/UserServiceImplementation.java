@@ -327,40 +327,18 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 
 	@Override
 	public void updateCurrentUserProfileIamge(MultipartFile newProfileImage) {
-
 		try {
-			// Create a subdirectory for the user based on their ID or username
 			User user = getCurrentUser();
-			String profileImagePath = user.getProfileImage();
-			String userSubdirectory = baseProfileImageDir + "/" + user.getUsername();
-			File directory = new File(userSubdirectory);
-			if (!directory.exists()) {
-				directory.mkdirs();
-			} else {
-				File[] files = directory.listFiles();
-				if (files != null) {
-					for (File file : files) {
-						file.delete();
-					}
-				}
-			}
 
 			if (newProfileImage != null && !newProfileImage.isEmpty()) {
-				// Generate a unique filename for the profile image
-				String originalFilename = newProfileImage.getOriginalFilename();
+				// Use the previously defined method to handle the S3 upload
+				UserDto userDto = new UserDto();
+				userDto.setUsername(user.getUsername());
+				userDto.setProfileImage(newProfileImage);
+				String newProfileImagePath = uploadProfileImageToS3(userDto);
 
-				String fileExtension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
-				String filename = UUID.randomUUID().toString() + "." + fileExtension;
-				profileImagePath = userSubdirectory + "/" + filename;
-
-				// Save the profile image to the user's subdirectory
-				Path destinationFile = Paths.get(userSubdirectory, filename);
-				Files.copy(newProfileImage.getInputStream(), destinationFile, StandardCopyOption.REPLACE_EXISTING);
-
-				// Save the BufferedImage as an image file
-				// File imageFile = new File(profileImagePath);
-				// ImageIO.write(bufferedImage, fileExtension, imageFile);
-				user.setProfileImage(profileImagePath);
+				// Update the user's profile image in the database
+				user.setProfileImage(newProfileImagePath);
 				userRepository.save(user);
 			}
 		} catch (Exception e) {
