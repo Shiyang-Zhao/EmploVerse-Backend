@@ -2,6 +2,9 @@
 
 # Exclude .jdk directory
 /app/.jdk
+*.psd
+*.pdf
+/test
 
 # Other directories or files to exclude (if any)
 # /path/to/other/directory
