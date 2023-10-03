@@ -4,6 +4,7 @@ import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.hibernate.validator.internal.util.logging.Log_.logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -67,6 +68,9 @@ public class JwtServiceImplementation implements JwtService {
     public User registerUser(UserDto userDto) throws Exception {
         if (userDto.getPassword1() == null || userDto.getPassword2() == null
                 || !userDto.getPassword1().equals(userDto.getPassword2())) {
+            System.out.println(userDto.getPassword1());
+            System.out.println(userDto.getPassword2());
+
             throw new IllegalArgumentException("Passwords do not match or are null");
         }
 
