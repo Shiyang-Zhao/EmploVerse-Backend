@@ -23,7 +23,6 @@ import com.java.springboot.EMSbackend.model.userModel.JwtTokenUtil;
 import com.java.springboot.EMSbackend.model.userModel.User;
 import com.java.springboot.EMSbackend.repository.EmployeeRepository;
 import com.java.springboot.EMSbackend.repository.UserRepository;
-import com.java.springboot.EMSbackend.service.S3Service.S3Service;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
