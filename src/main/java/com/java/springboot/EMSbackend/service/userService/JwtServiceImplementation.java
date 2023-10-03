@@ -65,8 +65,9 @@ public class JwtServiceImplementation implements JwtService {
 
     @Override
     public User registerUser(UserDto userDto) throws Exception {
-        if (!userDto.getPassword1().equals(userDto.getPassword2())) {
-            throw new IllegalArgumentException("Passwords do not match");
+        if (userDto.getPassword1() == null || userDto.getPassword2() == null
+                || !userDto.getPassword1().equals(userDto.getPassword2())) {
+            throw new IllegalArgumentException("Passwords do not match or are null");
         }
 
         String profileImagePath = userService.uploadProfileImageToS3(userDto);
