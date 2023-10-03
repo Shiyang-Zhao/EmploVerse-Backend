@@ -4,7 +4,6 @@ import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.hibernate.validator.internal.util.logging.Log_.logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
