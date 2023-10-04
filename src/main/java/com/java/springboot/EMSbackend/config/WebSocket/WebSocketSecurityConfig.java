@@ -23,7 +23,7 @@ public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer
     }
 
     @Value("${empverse.cors.origins}")
-    private String[] allowedOrigins;
+    private String allowedOrigins;
 
     @Bean
     public CorsFilter corsFilter() {
@@ -32,9 +32,7 @@ public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         config.setAllowCredentials(true);
         // Loop through the allowedOrigins array and add each origin
-        for (String origin : allowedOrigins) {
-            config.addAllowedOrigin(origin);
-        }
+        config.addAllowedOrigin(allowedOrigins);
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
