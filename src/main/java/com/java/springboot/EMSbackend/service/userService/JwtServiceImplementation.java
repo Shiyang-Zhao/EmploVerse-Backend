@@ -109,8 +109,6 @@ public class JwtServiceImplementation implements JwtService {
             cookie.setSecure(true); // Ensure cookie is sent only over HTTPS
             cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days expiration
             cookie.setPath("/");
-
-            response.setHeader("Set-Cookie", String.format("%s; SameSite=None", cookie.toString()));
             response.addCookie(cookie);
 
             return token;
