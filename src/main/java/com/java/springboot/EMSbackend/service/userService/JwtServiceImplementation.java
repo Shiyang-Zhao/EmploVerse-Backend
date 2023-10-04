@@ -110,11 +110,7 @@ public class JwtServiceImplementation implements JwtService {
             cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days expiration
             cookie.setPath("/");
 
-            // Ensure SameSite attribute is set to "None" for cross-origin requests
-            // and "Strict" or "Lax" for same-origin requests as per your use case
-            response.setHeader("Set-Cookie", String.format("%s; SameSite=None", cookie.toString()));
             response.addCookie(cookie);
-
             return token;
         } catch (DisabledException e) {
             throw new Exception("USER_DISABLED", e);
