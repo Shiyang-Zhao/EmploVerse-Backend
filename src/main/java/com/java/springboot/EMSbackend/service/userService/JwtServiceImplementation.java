@@ -166,6 +166,7 @@ public class JwtServiceImplementation implements JwtService {
             cookie.setMaxAge(0);
             cookie.setHttpOnly(true);
             cookie.setSecure(true);
+            cookie.setDomain(".herokuapp.com");
             cookie.setPath("/");
             response.addCookie(cookie);
             return "Logged out successfully";
