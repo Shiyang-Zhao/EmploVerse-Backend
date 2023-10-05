@@ -35,7 +35,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws ServletException, IOException {
-		// Extract JWT from the request
 		String jwtToken = jwtTokenUtil.getJwtFromRequest(request);
 
 		if (jwtToken != null) {
@@ -49,17 +48,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
 					// Validate the token with the corresponding user details
 					if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
-						if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
 
-							UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-									userDetails, null, userDetails.getAuthorities());
-							usernamePasswordAuthenticationToken
-									.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-							// After setting the Authentication in the context, we specify
-							// that the current user is authenticated. So it passes the Spring Security
-							// Configurations successfully.
-							SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-						}
+						UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+								userDetails, null, userDetails.getAuthorities());
+						usernamePasswordAuthenticationToken
+								.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+						// After setting the Authentication in the context, we specify
+						// that the current user is authenticated. So it passes the Spring Security
+						// Configurations successfully.
+						SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 					}
 				}
 			} catch (IllegalArgumentException e) {
