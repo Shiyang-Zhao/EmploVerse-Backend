@@ -43,16 +43,12 @@ public class UserController {
 		this.jwtService = jwtService;
 	}
 
-	// Admin or Manager rigister for employees and provide login info to employees
 	@PostMapping("/register")
-	// @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
 	public ResponseEntity<?> register(@ModelAttribute UserDto userDto) throws Exception {
 		return ResponseEntity.ok(jwtService.registerUser(userDto));
 	}
 
-	// User get login info from Admin or Manager to authenticate
 	@PostMapping("/authenticate")
-	// @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
 	public ResponseEntity<?> authenticate(@RequestBody JwtRequest request,
 			HttpServletResponse response)
 			throws Exception {
