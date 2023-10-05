@@ -31,7 +31,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
-@CrossOrigin(origins = { "https://emplo-verse-frontend.vercel.app/" }, allowCredentials = "true")
+@CrossOrigin(origins = { "https://emplo-verse-frontend-c1dlr022j-shiyang-zhaos-projects.vercel.app/" }, allowCredentials = "true")
 @RequestMapping("/users")
 public class UserController {
 
