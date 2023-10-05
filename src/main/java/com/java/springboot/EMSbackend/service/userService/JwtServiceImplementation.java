@@ -110,7 +110,6 @@ public class JwtServiceImplementation implements JwtService {
             cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days expiration
             cookie.setPath("/");
             response.addCookie(cookie);
-
             return token;
         } catch (DisabledException e) {
             throw new Exception("USER_DISABLED", e);
