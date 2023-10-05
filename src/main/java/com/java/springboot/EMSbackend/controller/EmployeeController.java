@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,8 +23,7 @@ import com.java.springboot.EMSbackend.model.employeeModel.Employee;
 import com.java.springboot.EMSbackend.service.employeeService.EmployeeService;
 
 @RestController
-// @CrossOrigin(origins = { "http://localhost:3000",
-// "http://emploverse-frontend.herokuapp.com/" }, allowCredentials = "true")
+@CrossOrigin(origins = { "http://emploverse-frontend.herokuapp.com/" }, allowCredentials = "true")
 @RequestMapping("/employees")
 public class EmployeeController {
 
