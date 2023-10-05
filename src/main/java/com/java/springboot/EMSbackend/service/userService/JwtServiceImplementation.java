@@ -104,12 +104,11 @@ public class JwtServiceImplementation implements JwtService {
             String authMethod = request.getUsernameOrEmail().contains("@") ? "email" : "username";
             final String token = jwtTokenUtil.generateToken(userDetails, authMethod, authorities);
 
-            Cookie cookie = new Cookie("jwt", token);
-            cookie.setHttpOnly(true);
-            cookie.setSecure(true); // Ensure cookie is sent only over HTTPS
-            cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days expiration
-            cookie.setPath("/");
-            response.setHeader("Set-Cookie", String.format("%s; %s", cookie.toString(), "SameSite=None"));
+            int maxAge = 7 * 24 * 60 * 60;
+            String cookieValue = String.format(
+                    "jwt=%s; Max-Age=%s; Path=/; Secure; HttpOnly; SameSite=None",
+                    token, maxAge);
+            response.setHeader("Set-Cookie", cookieValue);
             return token;
         } catch (DisabledException e) {
             throw new Exception("USER_DISABLED", e);
