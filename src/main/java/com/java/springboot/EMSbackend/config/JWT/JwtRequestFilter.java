@@ -37,35 +37,26 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 		String jwtToken = jwtTokenUtil.getJwtFromRequest(request);
 
-		if (jwtToken != null) {
+		if (jwtToken != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 			try {
 				String username = jwtTokenUtil.getUsernameFromToken(jwtToken);
+				UserDetails userDetails = userService.loadUserByUsername(username);
 
-				// Ensure that there isn't already an authentication (session) established
-				if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+				if (jwtTokenUtil.validateToken(jwtToken, userDetails) && !jwtTokenUtil.isTokenBlacklisted(jwtToken)) {
+					UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+							userDetails, null, userDetails.getAuthorities());
+					authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-					UserDetails userDetails = userService.loadUserByUsername(username);
-
-					// Validate the token with the corresponding user details
-					if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
-
-						UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-								userDetails, null, userDetails.getAuthorities());
-						usernamePasswordAuthenticationToken
-								.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-						// After setting the Authentication in the context, we specify
-						// that the current user is authenticated. So it passes the Spring Security
-						// Configurations successfully.
-						SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-					}
+					SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 				}
+
 			} catch (IllegalArgumentException e) {
 				logger.error("Unable to get JWT Token", e);
+				// Consider sending an error response
 			} catch (ExpiredJwtException e) {
 				logger.warn("JWT Token has expired", e);
+				// Consider sending an error response
 			}
-
-			jwtTokenUtil.removeExpiredTokensFromBlacklist();
 		}
 
 		chain.doFilter(request, response);

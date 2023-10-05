@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -59,8 +60,7 @@ public class JwtTokenUtil implements Serializable {
 			final Date expiration = getExpirationDateFromToken(token);
 			return expiration.before(new Date());
 		} catch (ExpiredJwtException e) {
-			
-			return false;
+			return true;
 		}
 	}
 
@@ -101,6 +101,7 @@ public class JwtTokenUtil implements Serializable {
 		return blacklistedTokens.contains(token);
 	}
 
+	@Scheduled(fixedRate = 3600000)
 	public void removeExpiredTokensFromBlacklist() {
 		Set<String> expiredTokens = new HashSet<>();
 
