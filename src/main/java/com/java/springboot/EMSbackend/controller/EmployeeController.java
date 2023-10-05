@@ -23,7 +23,6 @@ import com.java.springboot.EMSbackend.model.employeeModel.Employee;
 import com.java.springboot.EMSbackend.service.employeeService.EmployeeService;
 
 @RestController
-@CrossOrigin(origins = { "https://emplo-verse-frontend-c1dlr022j-shiyang-zhaos-projects.vercel.app/" }, allowCredentials = "true")
 @RequestMapping("/employees")
 public class EmployeeController {
 
