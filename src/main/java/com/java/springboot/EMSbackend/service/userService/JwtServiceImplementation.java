@@ -108,7 +108,7 @@ public class JwtServiceImplementation implements JwtService {
             cookie.setHttpOnly(true);
             cookie.setSecure(true); // Ensure cookie is sent only over HTTPS
             cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days expiration
-            cookie.setDomain(".herokuapp.com");
+            cookie.setDomain("herokuapp.com");
             cookie.setPath("/");
             response.addCookie(cookie);
 
@@ -167,7 +167,7 @@ public class JwtServiceImplementation implements JwtService {
             cookie.setMaxAge(0);
             cookie.setHttpOnly(true);
             cookie.setSecure(true);
-            cookie.setDomain(".herokuapp.com");
+            cookie.setDomain("herokuapp.com");
             cookie.setPath("/");
             response.addCookie(cookie);
             return "Logged out successfully";
