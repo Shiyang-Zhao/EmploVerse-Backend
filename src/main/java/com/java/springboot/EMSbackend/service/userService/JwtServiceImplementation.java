@@ -23,6 +23,7 @@ import com.java.springboot.EMSbackend.model.userModel.JwtTokenUtil;
 import com.java.springboot.EMSbackend.model.userModel.User;
 import com.java.springboot.EMSbackend.repository.EmployeeRepository;
 import com.java.springboot.EMSbackend.repository.UserRepository;
+import com.java.springboot.EMSbackend.service.S3Service.S3Service;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,11 +32,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @Service
 public class JwtServiceImplementation implements JwtService {
 
-    @Value("${empverse.base-image-dir}")
-    private String baseProfileImageDir;
-
     @Value("${empverse.default-image-path}")
-
     private String defaultProfileImagePath;
 
     private final BCryptPasswordEncoder passwordEncoder;
@@ -48,6 +45,8 @@ public class JwtServiceImplementation implements JwtService {
 
     private final UserRepository userRepository;
 
+    private final S3Service s3Service;
+
     @Autowired
     public JwtServiceImplementation(
             BCryptPasswordEncoder passwordEncoder,
@@ -55,25 +54,22 @@ public class JwtServiceImplementation implements JwtService {
             AuthenticationManager authenticationManager,
             UserService userService,
             UserRepository userRepository,
-            EmployeeRepository employeeRepository) {
+            EmployeeRepository employeeRepository, S3Service s3Service) {
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenUtil = jwtTokenUtil;
         this.authenticationManager = authenticationManager;
         this.userService = userService;
         this.userRepository = userRepository;
+        this.s3Service = s3Service;
     }
 
     @Override
     public User registerUser(UserDto userDto) throws Exception {
         if (userDto.getPassword1() == null || userDto.getPassword2() == null
                 || !userDto.getPassword1().equals(userDto.getPassword2())) {
-            System.out.println(userDto.getPassword1());
-            System.out.println(userDto.getPassword2());
-
             throw new IllegalArgumentException("Passwords do not match or are null");
         }
-
-        String profileImagePath = userService.uploadProfileImageToS3(userDto);
+        String profileImagePath = s3Service.uploadProfileImageToS3(userDto);
 
         User newUser = new User(userDto.getFirstName(), userDto.getLastName(), userDto.getUsername(),
                 userDto.getEmail(), passwordEncoder.encode(userDto.getPassword1()),
@@ -150,9 +146,7 @@ public class JwtServiceImplementation implements JwtService {
             if (jwt != null) {
                 // If the token is already blacklisted or expired, handle them together
                 if (jwtTokenUtil.isTokenBlacklisted(jwt) || jwtTokenUtil.isTokenExpired(jwt)) {
-                    // Here, you can decide whether you want to give a generic message
-                    // or determine which specific condition was met and give a more tailored
-                    // message
+
                     return "You have already been logged out.";
                 }
                 // If the token is neither blacklisted nor expired, blacklist it now

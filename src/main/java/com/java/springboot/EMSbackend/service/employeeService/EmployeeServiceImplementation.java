@@ -20,9 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.java.springboot.EMSbackend.dto.EmployeeDto.EmployeeDto;
-// import com.java.springboot.EMSbackend.dto.EmployeeDto.SalaryDto;
 import com.java.springboot.EMSbackend.model.employeeModel.Employee;
-import com.java.springboot.EMSbackend.model.employeeModel.SalaryInfo;
 import com.java.springboot.EMSbackend.repository.EmployeeRepository;
 
 @Service
@@ -46,12 +44,8 @@ public class EmployeeServiceImplementation implements EmployeeService {
 	@Override
 	public void createEmployee(EmployeeDto employeeDto) {
 		try {
-			// employeeDto.getPersonalInfo().setSsn(passwordEncoder.encode(employeeDto.getPersonalInfo().getSsn()));
-			// Employee newEmployee = new Employee(employeeDto.getUser(),
-			// employeeDto.getPersonalInfo(),
-			// employeeDto.getEmployeeInfo(), employeeDto.getEducationInfo());
-
-			Employee newEmployee = new Employee(employeeDto.getUser());
+			Employee newEmployee = new Employee(employeeDto.getUser(), employeeDto.getPersonalInfo(),
+					employeeDto.getEmployeeInfo(), employeeDto.getEducationInfo(), employeeDto.getSalaryInfo());
 			employeeRepository.save(newEmployee);
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to save employee: " + e.getMessage());
@@ -70,6 +64,7 @@ public class EmployeeServiceImplementation implements EmployeeService {
 			employee.setPersonalInfo(employeeDto.getPersonalInfo());
 			employee.setEmployeeInfo(employeeDto.getEmployeeInfo());
 			employee.setEducationInfo(employeeDto.getEducationInfo());
+			employee.setSalaryInfo(employeeDto.getSalaryInfo());
 			employeeRepository.save(employee);
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to update employee: " + e.getMessage());
@@ -168,63 +163,5 @@ public class EmployeeServiceImplementation implements EmployeeService {
 			throw new RuntimeException("Failed to search employee: " + e.getMessage());
 		}
 	}
-
-	// @Override
-	// public List<Employee> sortEmployees(List<Employee> employees, String
-	// sortField, String sortDir) {
-	// try {
-	// Function<Employee, String> getter = createFieldToGetterMap(sortField);
-	// if (getter == null) {
-	// throw new IllegalArgumentException("Invalid sortField: " + sortField);
-	// }
-
-	// Comparator<Employee> comparator = Comparator.comparing(getter);
-	// if (sortDir.equalsIgnoreCase("desc")) {
-	// comparator = comparator.reversed();
-	// }
-
-	// return employees.stream()
-	// .sorted(comparator)
-	// .collect(Collectors.toList());
-	// } catch (Exception e) {
-	// throw new RuntimeException("Failed to sort employees: " + e.getMessage());
-	// }
-	// }
-
-	// public void setSalaryDetails(SalaryInfo salaryInfo, SalaryDto salaryDto) {
-	// salaryInfo.setAmount(salaryDto.getAmount());
-	// salaryInfo.setPayFrequency(salaryDto.getPayFrequency());
-	// salaryInfo.setBonus(salaryDto.getBonus());
-	// salaryInfo.setTaxDeduction(salaryDto.getTaxDeduction());
-	// salaryInfo.setOvertimeHours(salaryDto.getOvertimeHours());
-	// salaryInfo.setOvertimeRate(salaryDto.getOvertimeRate());
-	// salaryInfo.setDeductions(salaryDto.getDeductions());
-	// salaryInfo.setInsuranceCoverage(salaryDto.getInsuranceCoverage());
-	// }
-
-	// @Override
-	// public BigDecimal setNetSalaryById(long id, SalaryDto salaryDto) {
-	// Employee employee = getEmployeeById(id);
-	// SalaryInfo salaryInfo = employee.getEmployeeInfo().getSalaryInfo();
-	// setSalaryDetails(salaryInfo, salaryDto);
-	// // Set the values from the SalaryDTO to the SalaryInfo object
-
-	// BigDecimal baseSalary = salaryInfo.getAmount();
-	// BigDecimal bonusAmount = salaryInfo.getBonus();
-	// BigDecimal taxDeductionAmount = salaryInfo.getTaxDeduction();
-	// double overtimeHours = salaryInfo.getOvertimeHours();
-	// double overtimeRate = salaryInfo.getOvertimeRate();
-
-	// // Calculate overtime pay
-	// BigDecimal overtimePay = BigDecimal.valueOf(overtimeHours * overtimeRate);
-
-	// // Calculate gross salary
-	// BigDecimal grossSalary = baseSalary.add(bonusAmount).add(overtimePay);
-
-	// // Calculate net salary after tax deductions
-	// BigDecimal netSalary = grossSalary.subtract(taxDeductionAmount);
-
-	// return netSalary;
-	// }
 
 }

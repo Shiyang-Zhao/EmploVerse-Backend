@@ -1,7 +1,9 @@
 package com.java.springboot.EMSbackend.service.S3Service;
 
-import java.io.InputStream;
+import com.java.springboot.EMSbackend.dto.UserDto.UserDto;
 
 public interface S3Service {
-    void uploadFile(String keyName, InputStream data) throws Exception;
+
+    String uploadProfileImageToS3(UserDto userDto) throws Exception;
+
 }

@@ -25,6 +25,4 @@ public interface EmployeeService {
 
 	List<Employee> searchEmployees(String keyword, String searchField);
 
-	// BigDecimal setNetSalaryById(long id, SalaryDto salaryDto);
-
 }

@@ -31,6 +31,6 @@ public class JwtRequest implements Serializable {
 	}
 
 	public Collection<String> getRoles() {
-		return roles;
+		return this.roles;
 	}
 }

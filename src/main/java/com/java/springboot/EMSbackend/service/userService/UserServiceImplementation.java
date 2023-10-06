@@ -1,18 +1,15 @@
 package com.java.springboot.EMSbackend.service.userService;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -35,12 +32,6 @@ import com.java.springboot.EMSbackend.service.S3Service.S3Service;
 
 @Service
 public class UserServiceImplementation implements UserService, UserDetailsService {
-
-	@Value("${empverse.base-image-dir}")
-	private String baseProfileImageDir;
-
-	@Value("${empverse.default-image-path}")
-	private String defaultProfileImagePath;
 
 	private final BCryptPasswordEncoder passwordEncoder;
 
@@ -68,31 +59,6 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 		return new org.springframework.security.core.userdetails.User(usernameOrEmail, user.getPassword(),
 				user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getName()))
 						.collect(Collectors.toList()));
-	}
-
-	@Override
-	public String uploadProfileImageToS3(UserDto userDto) {
-		try {
-			MultipartFile profileImage = userDto.getProfileImage();
-
-			if (profileImage == null || profileImage.isEmpty()) {
-				return defaultProfileImagePath; // return default if no image provided
-			}
-
-			String originalFilename = profileImage.getOriginalFilename();
-			String fileExtension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
-			String filename = UUID.randomUUID().toString() + "." + fileExtension;
-			String s3Path = userDto.getUsername() + "/" + filename;
-
-			try (InputStream inputStream = profileImage.getInputStream()) {
-				s3Service.uploadFile(s3Path, inputStream);
-			}
-
-			return baseProfileImageDir + s3Path;
-
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to upload profile image to S3", e);
-		}
 	}
 
 	@Override
@@ -271,28 +237,6 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 		}
 	}
 
-	// @Override
-	// public List<User> sortUsers(List<User> users, String sortField, String
-	// sortDir) {
-	// try {
-	// Function<User, String> getter = createFieldToGetterMap(sortField);
-	// if (getter == null) {
-	// throw new IllegalArgumentException("Invalid sortField: " + sortField);
-	// }
-
-	// Comparator<User> comparator = Comparator.comparing(getter);
-	// if (sortDir.equalsIgnoreCase("desc")) {
-	// comparator = comparator.reversed();
-	// }
-
-	// return users.stream()
-	// .sorted(comparator)
-	// .collect(Collectors.toList());
-	// } catch (Exception e) {
-	// throw new RuntimeException("Failed to sort users: " + e.getMessage());
-	// }
-	// }
-
 	@Override
 	public User getCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -330,7 +274,7 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 				UserDto userDto = new UserDto();
 				userDto.setUsername(user.getUsername());
 				userDto.setProfileImage(newProfileImage);
-				String newProfileImagePath = uploadProfileImageToS3(userDto);
+				String newProfileImagePath = s3Service.uploadProfileImageToS3(userDto);
 
 				// Update the user's profile image in the database
 				user.setProfileImage(newProfileImagePath);

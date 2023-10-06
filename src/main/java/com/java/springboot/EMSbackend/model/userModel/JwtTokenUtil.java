@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -27,9 +27,13 @@ public class JwtTokenUtil implements Serializable {
 
 	private static final long serialVersionUID = -2550185165626007488L;
 
-	public static final long JWT_TOKEN_VALIDITY = 60 * 60;
+	@Value("${jwt.tokenValidity}")
+	private long JWT_TOKEN_VALIDITY;
 
-	private Set<String> blacklistedTokens = new HashSet<>();
+	@Value("${jwt.cookieName}")
+	private String JWT_COOKIE_NAME;
+
+	private final Set<String> blacklistedTokens = ConcurrentHashMap.newKeySet();
 
 	@Value("${jwt.secret}")
 	private String secret;
@@ -56,17 +60,47 @@ public class JwtTokenUtil implements Serializable {
 	}
 
 	public Boolean isTokenExpired(String token) {
-		try {
-			final Date expiration = getExpirationDateFromToken(token);
-			return expiration.before(new Date());
-		} catch (ExpiredJwtException e) {
-			return true;
-		}
+		final Date expiration = getExpirationDateFromToken(token);
+		return expiration.before(new Date());
 	}
 
 	private Boolean ignoreTokenExpiration(String token) {
 		// here you specify tokens, for that the expiration is ignored
 		return false;
+	}
+
+	public Boolean canTokenBeRefreshed(String token) {
+		return (!isTokenExpired(token) || ignoreTokenExpiration(token));
+	}
+
+	public void blacklistToken(String token) {
+		blacklistedTokens.add(token);
+	}
+
+	public boolean isTokenBlacklisted(String token) {
+		return blacklistedTokens.contains(token);
+	}
+
+	public Boolean validateToken(String token, UserDetails userDetails) {
+		final String username = getUsernameFromToken(token);
+		return (username.equals(userDetails.getUsername()) && !isTokenExpired(token) && !isTokenBlacklisted(token));
+	}
+
+	@Scheduled(fixedRate = 3600000)
+	public void removeExpiredTokensFromBlacklist() {
+		blacklistedTokens.removeIf(this::isTokenExpired);
+	}
+
+	public String getJwtFromRequest(HttpServletRequest request) {
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if (JWT_COOKIE_NAME.equals(cookie.getName())) {
+					return cookie.getValue();
+				}
+			}
+		}
+		return null;
 	}
 
 	public String generateToken(UserDetails userDetails, String authMethod,
@@ -84,51 +118,9 @@ public class JwtTokenUtil implements Serializable {
 				.setClaims(claims)
 				.setSubject(subject)
 				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + 30 * JWT_TOKEN_VALIDITY * 1000))
+				.setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
 				.signWith(SignatureAlgorithm.HS512, secret)
 				.compact();
-	}
-
-	public Boolean canTokenBeRefreshed(String token) {
-		return (!isTokenExpired(token) || ignoreTokenExpiration(token));
-	}
-
-	public void blacklistToken(String token) {
-		blacklistedTokens.add(token);
-	}
-
-	public boolean isTokenBlacklisted(String token) {
-		return blacklistedTokens.contains(token);
-	}
-
-	@Scheduled(fixedRate = 3600000)
-	public void removeExpiredTokensFromBlacklist() {
-		Set<String> expiredTokens = new HashSet<>();
-
-		for (String token : blacklistedTokens) {
-			if (isTokenExpired(token)) {
-				expiredTokens.add(token);
-			}
-		}
-
-		blacklistedTokens.removeAll(expiredTokens);
-	}
-
-	public Boolean validateToken(String token, UserDetails userDetails) {
-		final String username = getUsernameFromToken(token);
-		return (username.equals(userDetails.getUsername()) && !isTokenExpired(token) && !isTokenBlacklisted(token));
-	}
-
-	public String getJwtFromRequest(HttpServletRequest request) {
-		Cookie[] cookies = request.getCookies();
-		if (cookies != null) {
-			for (Cookie cookie : cookies) {
-				if ("jwt".equals(cookie.getName())) {
-					return cookie.getValue();
-				}
-			}
-		}
-		return null;
 	}
 
 }

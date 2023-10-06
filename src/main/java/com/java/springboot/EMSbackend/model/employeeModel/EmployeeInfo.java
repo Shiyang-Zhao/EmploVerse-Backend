@@ -2,14 +2,11 @@ package com.java.springboot.EMSbackend.model.employeeModel;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -62,10 +59,6 @@ public class EmployeeInfo {
     @Column(name = "status")
     private String status;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "salary_info_id", referencedColumnName = "id")
-    private SalaryInfo salaryInfo;
-
     public EmployeeInfo() {
         this.startDate = LocalDate.now();
         this.endDate = LocalDate.now();
@@ -76,12 +69,11 @@ public class EmployeeInfo {
         this.workLocation = "N/A";
         this.workSchedule = "N/A";
         this.status = "N/A";
-        this.salaryInfo = new SalaryInfo();
     }
 
     public EmployeeInfo(LocalDate startDate, LocalDate endDate, String employmentType, String department,
             String manager, String jobTitles, String workLocation,
-            String workSchedule, String status, SalaryInfo salaryInfo) {
+            String workSchedule, String status) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.employmentType = employmentType;
@@ -91,6 +83,5 @@ public class EmployeeInfo {
         this.workLocation = workLocation;
         this.workSchedule = workSchedule;
         this.status = status;
-        this.salaryInfo = salaryInfo;
     }
 }
