@@ -34,37 +34,12 @@ import jakarta.servlet.http.HttpServletResponse;
 public class UserController {
 
 	private final UserService userService;
-	private final JwtService jwtService;
 
 	@Autowired
-	public UserController(UserService userService, JwtService jwtService) {
+	public UserController(UserService userService) {
 		this.userService = userService;
-		this.jwtService = jwtService;
 	}
 
-	@PostMapping("/register")
-	public ResponseEntity<?> register(@ModelAttribute UserDto userDto) throws Exception {
-		return ResponseEntity.ok(jwtService.registerUser(userDto));
-	}
-
-	@PostMapping("/authenticate")
-	public ResponseEntity<?> authenticate(@RequestBody JwtRequest request,
-			HttpServletResponse response)
-			throws Exception {
-		String token = jwtService.authenticateUser(request, response);
-		return ResponseEntity
-				.ok(new JwtResponse(token, request.getRoles()));
-	}
-
-	// Only authenticated accounts can log out
-	@PostMapping("/logout")
-	// @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
-	public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		String message = jwtService.logoutUser(request, response);
-		return ResponseEntity.ok(message);
-	}
-
-	// APIs for admin page
 	// Get User APIs
 	@GetMapping("/")
 	@PreAuthorize("hasAnyRole('ADMIN')")

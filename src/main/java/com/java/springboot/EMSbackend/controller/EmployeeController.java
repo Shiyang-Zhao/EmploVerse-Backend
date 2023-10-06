@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.java.springboot.EMSbackend.dto.EmployeeDto.EmployeeDto;
-// import com.java.springboot.EMSbackend.dto.EmployeeDto.SalaryDto;
 import com.java.springboot.EMSbackend.model.employeeModel.Employee;
 import com.java.springboot.EMSbackend.service.employeeService.EmployeeService;
 
