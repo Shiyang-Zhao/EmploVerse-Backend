@@ -27,7 +27,7 @@ public class JwtTokenUtil implements Serializable {
 	private static final long serialVersionUID = -2550185165626007488L;
 
 	@Value("${jwt.maxAge}")
-	private long JWT_TOKEN_VALIDITY;
+	private long JWT_MAX_AGE;
 
 	@Value("${jwt.cookieName}")
 	private String JWT_COOKIE_NAME;
@@ -117,7 +117,7 @@ public class JwtTokenUtil implements Serializable {
 				.setClaims(claims)
 				.setSubject(subject)
 				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
+				.setExpiration(new Date(System.currentTimeMillis() + JWT_MAX_AGE * 1000))
 				.signWith(SignatureAlgorithm.HS512, secret)
 				.compact();
 	}

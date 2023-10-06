@@ -31,8 +31,8 @@ import jakarta.servlet.http.HttpServletResponse;
 @Service
 public class JwtServiceImplementation implements JwtService {
 
-    @Value("${empverse.default-image-path}")
-    private String defaultProfileImagePath;
+    @Value("${cookie.maxAge}")
+    private long cookieMaxAge;
 
     private final BCryptPasswordEncoder passwordEncoder;
 
@@ -95,14 +95,13 @@ public class JwtServiceImplementation implements JwtService {
                     authorities // Pass the authorities directly here
             ));
             String authMethod = request.getUsernameOrEmail().contains("@") ? "email" : "username";
-            final String token = jwtTokenUtil.generateToken(userDetails, authMethod, authorities);
+            final String jwt = jwtTokenUtil.generateToken(userDetails, authMethod, authorities);
 
-            int maxAge = 7 * 24 * 60 * 60;
             String cookieValue = String.format(
                     "jwt=%s; Max-Age=%s; Path=/; Secure; HttpOnly; SameSite=None",
-                    token, maxAge);
+                    jwt, cookieMaxAge);
             response.setHeader("Set-Cookie", cookieValue);
-            return token;
+            return jwt;
         } catch (DisabledException e) {
             throw new Exception("USER_DISABLED", e);
         } catch (BadCredentialsException e) {

@@ -23,10 +23,10 @@ public class S3ServiceImplementation implements S3Service {
     @Value("${aws.s3.bucketName}")
     private String bucketName;
 
-    @Value("${empverse.base-image-path}")
+    @Value("${empverse.baseImagePath}")
     private String baseProfileImagePath;
 
-    @Value("${empverse.default-image-path}")
+    @Value("${empverse.defaultImagePath}")
     private String defaultProfileImagePath;
 
     private void uploadFile(String keyName, InputStream data) throws Exception {
