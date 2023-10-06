@@ -58,7 +58,7 @@ public class UserController {
 
 	@GetMapping("/checkAuth")
 	public ResponseEntity<String> checkAuth(HttpServletRequest request) throws Exception {
-		String message = jwtService.checkAuth(request);
+		String message = jwtService.checkUserAuth(request);
 		return ResponseEntity.ok(message);
 	}
 

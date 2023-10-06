@@ -110,29 +110,6 @@ public class JwtServiceImplementation implements JwtService {
     }
 
     @Override
-    public String checkAuth(HttpServletRequest request) throws Exception {
-        try {
-            String jwt = jwtTokenUtil.getJwtFromRequest(request);
-            if (jwt == null || jwt.isEmpty()) {
-                throw new Exception("No JWT found in the request.");
-            }
-            String username = jwtTokenUtil.getUsernameFromToken(jwt);
-            if (username == null || username.isEmpty()) {
-                throw new Exception("Invalid JWT token.");
-            }
-
-            UserDetails userDetails = userService.loadUserByUsername(username);
-
-            if (!jwtTokenUtil.validateToken(jwt, userDetails)) {
-                throw new Exception("Token validation failed.");
-            }
-            return "User " + username + " is authenticated.";
-        } catch (Exception e) {
-            throw new Exception("Failed to check authentication: " + e.getMessage());
-        }
-    }
-
-    @Override
     public String logoutUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         try {

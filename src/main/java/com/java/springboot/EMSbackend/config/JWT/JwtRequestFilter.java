@@ -37,30 +37,27 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 
 		final String jwt = jwtTokenUtil.getJwtFromRequest(request);
-
 		try {
 			if (jwt != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-				try {
-					final String username = jwtTokenUtil.getUsernameFromToken(jwt);
-					final UserDetails userDetails = userService.loadUserByUsername(username);
+				final String username = jwtTokenUtil.getUsernameFromToken(jwt);
+				final UserDetails userDetails = userService.loadUserByUsername(username);
 
-					if (jwtTokenUtil.validateToken(jwt, userDetails)) {
-						UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-								userDetails, null, userDetails.getAuthorities());
-						authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-						SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-					}
-				} catch (IllegalArgumentException e) {
-					logger.error("Unable to get JWT Token", e);
-				} catch (ExpiredJwtException e) {
-					logger.warn("JWT Token has expired", e);
+				if (jwtTokenUtil.validateToken(jwt, userDetails)) {
+					UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+							userDetails, null, userDetails.getAuthorities());
+					authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+					SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 				}
 			}
-
-			chain.doFilter(request, response);
-		} finally {
+		} catch (IllegalArgumentException e) {
+			logger.error("Unable to get JWT Token", e);
+		} catch (ExpiredJwtException e) {
+			logger.warn("JWT Token has expired", e);
 			SecurityContextHolder.clearContext();
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return;
 		}
+		chain.doFilter(request, response);
 
 	}
 }

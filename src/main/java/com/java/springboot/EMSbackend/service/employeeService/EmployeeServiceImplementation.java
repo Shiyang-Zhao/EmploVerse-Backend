@@ -42,7 +42,7 @@ public class EmployeeServiceImplementation implements EmployeeService {
 	@Override
 	public void createEmployee(EmployeeDto employeeDto) {
 		try {
-			
+
 			Employee newEmployee = new Employee(employeeDto.getUser(), employeeDto.getPersonalInfo(),
 					employeeDto.getEmployeeInfo(), employeeDto.getEducationInfo(), employeeDto.getSalaryInfo());
 			employeeRepository.save(newEmployee);

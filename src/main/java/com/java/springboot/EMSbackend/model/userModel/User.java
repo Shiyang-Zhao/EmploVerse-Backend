@@ -3,6 +3,8 @@ package com.java.springboot.EMSbackend.model.userModel;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -63,6 +65,7 @@ public class User {
 	private String email;
 
 	@NotBlank
+	@JsonIgnore
 	@Size(min = 8)
 	@Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$")
 	@Column(name = "password")

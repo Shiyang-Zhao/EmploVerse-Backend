@@ -24,16 +24,16 @@ import com.java.springboot.EMSbackend.config.JWT.JwtRequestFilter;
 public class WebSecurityConfig {
 
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    private final UserDetailsService jwtUserDetailsService;
+    private final UserDetailsService userDetailsService;
     private final JwtRequestFilter jwtRequestFilter;
 
     @Autowired
     public WebSecurityConfig(
             JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
-            UserDetailsService jwtUserDetailsService,
+            UserDetailsService userDetailsService,
             JwtRequestFilter jwtRequestFilter) {
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
-        this.jwtUserDetailsService = jwtUserDetailsService;
+        this.userDetailsService = userDetailsService;
         this.jwtRequestFilter = jwtRequestFilter;
     }
 
@@ -56,7 +56,6 @@ public class WebSecurityConfig {
                 // dont authenticate this particular request
                 .authorizeHttpRequests()
                 .requestMatchers("/users/register", "/users/authenticate", "/users/logout", "/ws/**").permitAll()
-                
                 .anyRequest().authenticated().and()
                 // make sure we use stateless session; session won't be used to store user's
                 // state.
@@ -71,7 +70,7 @@ public class WebSecurityConfig {
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth
-                .userDetailsService(jwtUserDetailsService)
+                .userDetailsService(userDetailsService)
                 .passwordEncoder(passwordEncoder());
     }
 }
