@@ -30,9 +30,11 @@ public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer
 
         CorsConfiguration config = new CorsConfiguration();
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        // Splitting origins into an array and add each origin
+        for (String allowedOrigin : allowedOrigins.split(",")) {
+            config.addAllowedOriginPattern(allowedOrigin.trim()); // Consider using allowed origin patterns
+        }
         config.setAllowCredentials(true);
-        // Loop through the allowedOrigins array and add each origin
-        config.addAllowedOrigin(allowedOrigins);
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
@@ -45,7 +47,7 @@ public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer
         // registry.addEndpoint("/ws")
         // .setAllowedOrigins(allowedOrigins);
         registry.addEndpoint("/ws")
-                .setAllowedOriginPatterns(allowedOrigins)
+                .setAllowedOriginPatterns(allowedOrigins.split(","))
                 .withSockJS();
     }
 
