@@ -69,12 +69,10 @@ public class JwtServiceImplementation implements JwtService {
             throw new IllegalArgumentException("Passwords do not match or are null");
         }
         String profileImagePath = s3Service.uploadProfileImageToS3(userDto);
-
         User newUser = new User(userDto.getFirstName(), userDto.getLastName(), userDto.getUsername(),
                 userDto.getEmail(), passwordEncoder.encode(userDto.getPassword1()),
                 userDto.getPhoneNumber(), profileImagePath, userDto.getRoles());
         userRepository.save(newUser);
-
         return newUser;
     }
 

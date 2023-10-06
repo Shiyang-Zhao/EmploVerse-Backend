@@ -53,7 +53,6 @@ public class S3ServiceImplementation implements S3Service {
                 uploadFile(s3Path, inputStream);
             }
             return baseProfileImagePath + s3Path;
-
         } catch (Exception e) {
             throw new RuntimeException("Failed to upload profile image to S3", e);
         }
