@@ -18,8 +18,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.java.springboot.EMSbackend.model.userModel.JwtTokenUtil;
 import com.java.springboot.EMSbackend.service.userService.UserService;
 
-import io.jsonwebtoken.ExpiredJwtException;
-
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
@@ -47,11 +45,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 							userDetails, null, userDetails.getAuthorities());
 					authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 					SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+				} else {
+					response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+					return;
 				}
 			}
 		} catch (IllegalArgumentException e) {
 			logger.error("Unable to get JWT Token", e);
-		} catch (ExpiredJwtException e) {
+		} catch (RuntimeException e) {
 			logger.warn("JWT Token has expired", e);
 			SecurityContextHolder.clearContext();
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

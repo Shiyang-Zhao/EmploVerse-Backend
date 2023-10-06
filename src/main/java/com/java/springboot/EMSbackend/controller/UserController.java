@@ -56,12 +56,6 @@ public class UserController {
 				.ok(new JwtResponse(token, request.getRoles()));
 	}
 
-	@GetMapping("/checkAuth")
-	public ResponseEntity<String> checkAuth(HttpServletRequest request) throws Exception {
-		String message = jwtService.checkUserAuth(request);
-		return ResponseEntity.ok(message);
-	}
-
 	// Only authenticated accounts can log out
 	@PostMapping("/logout")
 	// @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")

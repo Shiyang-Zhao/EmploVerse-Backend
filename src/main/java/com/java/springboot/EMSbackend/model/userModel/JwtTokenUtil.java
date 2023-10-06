@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.Cookie;
@@ -60,7 +61,10 @@ public class JwtTokenUtil implements Serializable {
 
 	public Boolean isTokenExpired(String token) {
 		final Date expiration = getExpirationDateFromToken(token);
-		return expiration.before(new Date());
+		if (expiration.before(new Date())) {
+			throw new RuntimeException("The token has expired");
+		}
+		return false;
 	}
 
 	private Boolean ignoreTokenExpiration(String token) {
@@ -77,7 +81,10 @@ public class JwtTokenUtil implements Serializable {
 	}
 
 	public boolean isTokenBlacklisted(String token) {
-		return blacklistedTokens.contains(token);
+		if (blacklistedTokens.contains(token)) {
+			throw new RuntimeException("The token is in blacklist");
+		}
+		return false;
 	}
 
 	public Boolean validateToken(String token, UserDetails userDetails) {
