@@ -27,7 +27,7 @@ public class JwtTokenUtil implements Serializable {
 
 	private static final long serialVersionUID = -2550185165626007488L;
 
-	@Value("${jwt.tokenValidity}")
+	@Value("${jwt.maxAge}")
 	private long JWT_TOKEN_VALIDITY;
 
 	@Value("${jwt.cookieName}")

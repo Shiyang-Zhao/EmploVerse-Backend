@@ -138,11 +138,9 @@ public class JwtServiceImplementation implements JwtService {
 
     @Override
     public String logoutUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        SecurityContextHolder.clearContext();
+
         try {
             String jwt = jwtTokenUtil.getJwtFromRequest(request);
-
-            // If the JWT token exists, check its status
             if (jwt != null) {
                 // If the token is already blacklisted or expired, handle them together
                 if (jwtTokenUtil.isTokenBlacklisted(jwt) || jwtTokenUtil.isTokenExpired(jwt)) {
@@ -153,13 +151,8 @@ public class JwtServiceImplementation implements JwtService {
                 jwtTokenUtil.blacklistToken(jwt);
             }
 
-            // Create and set the jwt cookie to expire immediately
-            Cookie cookie = new Cookie("jwt", null);
-            cookie.setMaxAge(0);
-            cookie.setHttpOnly(true);
-            cookie.setSecure(true);
-            cookie.setPath("/");
-            response.addCookie(cookie);
+            response.setHeader("Set-Cookie", "jwt=; Max-Age=0; Path=/; Secure; HttpOnly; SameSite=None");
+            SecurityContextHolder.clearContext();
             return "Logged out successfully";
         } catch (Exception e) {
             throw new Exception("Failed to log out the user: " + e.getMessage());
