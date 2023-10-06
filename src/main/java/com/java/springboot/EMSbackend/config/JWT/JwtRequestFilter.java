@@ -35,28 +35,32 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws ServletException, IOException {
-		String jwtToken = jwtTokenUtil.getJwtFromRequest(request);
 
-		if (jwtToken != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-			try {
-				String username = jwtTokenUtil.getUsernameFromToken(jwtToken);
-				UserDetails userDetails = userService.loadUserByUsername(username);
+		final String jwt = jwtTokenUtil.getJwtFromRequest(request);
 
-				if (jwtTokenUtil.validateToken(jwtToken, userDetails) && !jwtTokenUtil.isTokenBlacklisted(jwtToken)) {
-					UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-							userDetails, null, userDetails.getAuthorities());
-					authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+		try {
+			if (jwt != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+				try {
+					final String username = jwtTokenUtil.getUsernameFromToken(jwt);
+					final UserDetails userDetails = userService.loadUserByUsername(username);
 
-					SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+					if (jwtTokenUtil.validateToken(jwt, userDetails)) {
+						UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+								userDetails, null, userDetails.getAuthorities());
+						authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+						SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+					}
+				} catch (IllegalArgumentException e) {
+					logger.error("Unable to get JWT Token", e);
+				} catch (ExpiredJwtException e) {
+					logger.warn("JWT Token has expired", e);
 				}
-
-			} catch (IllegalArgumentException e) {
-				logger.error("Unable to get JWT Token", e);
-			} catch (ExpiredJwtException e) {
-				logger.warn("JWT Token has expired", e);
 			}
+
+			chain.doFilter(request, response);
+		} finally {
+			SecurityContextHolder.clearContext();
 		}
 
-		chain.doFilter(request, response);
 	}
 }

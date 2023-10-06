@@ -25,7 +25,6 @@ import com.java.springboot.EMSbackend.repository.EmployeeRepository;
 import com.java.springboot.EMSbackend.repository.UserRepository;
 import com.java.springboot.EMSbackend.service.S3Service.S3Service;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -141,18 +140,12 @@ public class JwtServiceImplementation implements JwtService {
 
         try {
             String jwt = jwtTokenUtil.getJwtFromRequest(request);
-            if (jwt != null) {
-                // If the token is already blacklisted or expired, handle them together
-                if (jwtTokenUtil.isTokenBlacklisted(jwt) || jwtTokenUtil.isTokenExpired(jwt)) {
-
-                    return "You have already been logged out.";
-                }
-                // If the token is neither blacklisted nor expired, blacklist it now
+            UserDetails userDetails = userService.loadUserByUsername(jwtTokenUtil.getUsernameFromToken(jwt));
+            if (jwt != null && jwtTokenUtil.validateToken(jwt, userDetails)) {
                 jwtTokenUtil.blacklistToken(jwt);
+                response.setHeader("Set-Cookie", "jwt=; Max-Age=0; Path=/; Secure; HttpOnly; SameSite=None");
+                SecurityContextHolder.clearContext();
             }
-
-            response.setHeader("Set-Cookie", "jwt=; Max-Age=0; Path=/; Secure; HttpOnly; SameSite=None");
-            SecurityContextHolder.clearContext();
             return "Logged out successfully";
         } catch (Exception e) {
             throw new Exception("Failed to log out the user: " + e.getMessage());

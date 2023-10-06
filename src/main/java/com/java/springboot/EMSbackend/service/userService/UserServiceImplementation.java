@@ -212,17 +212,12 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 			String lowercaseKeyword = keyword.toLowerCase(); // Convert the keyword to lowercase
 
 			if (keyword.isEmpty()) {
-				// If the search keyword is empty, return all users using findPaginated
-				// method
 				return new ArrayList<>();
 			}
-
 			Function<User, String> getter = createFieldToGetterMap(searchField);
-
 			if (getter == null) {
 				throw new IllegalArgumentException("Invalid searchField: " + searchField);
 			}
-
 			// Define a predicate to filter users based on the keyword and search field
 			Predicate<User> searchPredicate = user -> getter.apply(user).toLowerCase()
 					.contains(lowercaseKeyword);
