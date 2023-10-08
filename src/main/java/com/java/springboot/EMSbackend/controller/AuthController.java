@@ -1,7 +1,9 @@
 package com.java.springboot.EMSbackend.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,6 +41,15 @@ public class AuthController {
         String token = jwtService.authenticateUser(request, response);
         return ResponseEntity
                 .ok(new JwtResponse(token, request.getRoles()));
+    }
+
+    @GetMapping("/checkAuth")
+    public ResponseEntity<String> checkAuth(HttpServletRequest request) {
+        if (jwtService.checkAuth(request)) {
+            return ResponseEntity.ok("Authenticated");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+        }
     }
 
     // Only authenticated accounts can log out

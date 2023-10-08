@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -107,6 +108,26 @@ public class JwtServiceImplementation implements JwtService {
         } catch (BadCredentialsException e) {
             throw new Exception("INVALID_CREDENTIALS", e);
         }
+    }
+
+    @Override
+    public Boolean checkAuth(HttpServletRequest request) {
+        try {
+            String jwt = jwtTokenUtil.getJwtFromRequest(request);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            if (jwt != null) {
+                UserDetails userDetails = userService.loadUserByUsername(jwtTokenUtil.getUsernameFromToken(jwt));
+
+                if (userDetails != null && authentication != null && jwtTokenUtil.validateToken(jwt, userDetails)
+                        && authentication.isAuthenticated()) {
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return false;
     }
 
     @Override
