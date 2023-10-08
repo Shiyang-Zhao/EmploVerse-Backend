@@ -1,5 +1,7 @@
 package com.java.springboot.EMSbackend.service.userService;
 
+import java.util.Map;
+
 import com.java.springboot.EMSbackend.dto.UserDto.UserDto;
 import com.java.springboot.EMSbackend.model.userModel.JwtRequest;
 import com.java.springboot.EMSbackend.model.userModel.User;
@@ -13,7 +15,7 @@ public interface JwtService {
 
     String authenticateUser(JwtRequest request, HttpServletResponse response) throws Exception;
 
-    Boolean checkAuth(HttpServletRequest request);
+    Map<String, Object> checkAuth(HttpServletRequest request);
 
     String logoutUser(HttpServletRequest request, HttpServletResponse response) throws Exception;
 }

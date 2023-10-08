@@ -1,5 +1,7 @@
 package com.java.springboot.EMSbackend.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import com.java.springboot.EMSbackend.model.userModel.JwtRequest;
 import com.java.springboot.EMSbackend.model.userModel.JwtResponse;
 import com.java.springboot.EMSbackend.service.userService.JwtService;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -44,9 +47,10 @@ public class AuthController {
     }
 
     @GetMapping("/checkAuth")
-    public ResponseEntity<String> checkAuth(HttpServletRequest request) {
-        if (jwtService.checkAuth(request)) {
-            return ResponseEntity.ok("Authenticated");
+    public ResponseEntity<?> checkAuth(HttpServletRequest request) {
+        Map<String, Object> claims = jwtService.checkAuth(request);
+        if (claims != null) {
+            return ResponseEntity.ok(claims);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
         }
@@ -54,7 +58,6 @@ public class AuthController {
 
     // Only authenticated accounts can log out
     @PostMapping("/logout")
-    // @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String message = jwtService.logoutUser(request, response);
         return ResponseEntity.ok(message);

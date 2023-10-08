@@ -3,6 +3,8 @@ package com.java.springboot.EMSbackend.service.userService;
 import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +28,7 @@ import com.java.springboot.EMSbackend.repository.EmployeeRepository;
 import com.java.springboot.EMSbackend.repository.UserRepository;
 import com.java.springboot.EMSbackend.service.S3Service.S3Service;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -99,8 +102,8 @@ public class JwtServiceImplementation implements JwtService {
             final String jwt = jwtTokenUtil.generateToken(userDetails, authMethod, authorities);
 
             String cookieValue = String.format(
-                    "jwt=%s; Max-Age=%s; Path=/; Secure; HttpOnly; SameSite=None",
-                    jwt, cookieMaxAge);
+                    "jwt=%s; authMethod=%s; Max-Age=%s; Path=/; Secure; HttpOnly; SameSite=None",
+                    jwt, authMethod, cookieMaxAge);
             response.setHeader("Set-Cookie", cookieValue);
             return jwt;
         } catch (DisabledException e) {
@@ -111,23 +114,18 @@ public class JwtServiceImplementation implements JwtService {
     }
 
     @Override
-    public Boolean checkAuth(HttpServletRequest request) {
-        try {
-            String jwt = jwtTokenUtil.getJwtFromRequest(request);
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-            if (jwt != null) {
-                UserDetails userDetails = userService.loadUserByUsername(jwtTokenUtil.getUsernameFromToken(jwt));
-
-                if (userDetails != null && authentication != null && jwtTokenUtil.validateToken(jwt, userDetails)
-                        && authentication.isAuthenticated()) {
-                    return true;
-                }
+    public Map<String, Object> checkAuth(HttpServletRequest request) {
+        String jwt = jwtTokenUtil.getJwtFromRequest(request);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (jwt != null) {
+            UserDetails userDetails = userService.loadUserByUsername(jwtTokenUtil.getUsernameFromToken(jwt));
+            if (userDetails != null && authentication != null && jwtTokenUtil.validateToken(jwt, userDetails)
+                    && authentication.isAuthenticated()) {
+                Map<String, Object> claims = new HashMap<>(jwtTokenUtil.getAllClaimsFromToken(jwt));
+                return claims;
             }
-        } catch (Exception e) {
-            return false;
         }
-        return false;
+        return null;
     }
 
     @Override
@@ -138,7 +136,8 @@ public class JwtServiceImplementation implements JwtService {
             UserDetails userDetails = userService.loadUserByUsername(jwtTokenUtil.getUsernameFromToken(jwt));
             if (jwt != null && jwtTokenUtil.validateToken(jwt, userDetails)) {
                 jwtTokenUtil.blacklistToken(jwt);
-                response.setHeader("Set-Cookie", "jwt=; Max-Age=0; Path=/; Secure; HttpOnly; SameSite=None");
+                response.setHeader("Set-Cookie",
+                        "jwt=; authMethod=; Max-Age=0; Path=/; Secure; HttpOnly; SameSite=None");
                 SecurityContextHolder.clearContext();
             }
             return "Logged out successfully";
