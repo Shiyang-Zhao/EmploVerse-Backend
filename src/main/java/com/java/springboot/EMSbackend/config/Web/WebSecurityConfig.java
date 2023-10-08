@@ -55,7 +55,7 @@ public class WebSecurityConfig {
                 .cors().and()
                 // dont authenticate this particular request
                 .authorizeHttpRequests()
-                .requestMatchers("/auth/register", "/auth/authenticate", "/auth/logout", "/ws/**").permitAll()
+                .requestMatchers("/auth/**", "/ws/**").permitAll()
                 .anyRequest().authenticated().and()
                 // make sure we use stateless session; session won't be used to store user's
                 // state.
