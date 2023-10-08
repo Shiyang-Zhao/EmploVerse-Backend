@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +21,9 @@ import com.java.springboot.EMSbackend.service.userService.UserService;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
+
+	@Value("${server.servlet.context-path}")
+	private String contextPath;
 
 	private final JwtTokenUtil jwtTokenUtil;
 	private final UserService userService;
@@ -34,7 +38,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws ServletException, IOException {
 
-		if (request.getRequestURI().startsWith("/auth/")) {
+		if (request.getRequestURI().startsWith(contextPath + "/auth/")) {
 			chain.doFilter(request, response);
 			return;
 		}
