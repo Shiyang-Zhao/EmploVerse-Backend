@@ -17,7 +17,6 @@ import com.java.springboot.EMSbackend.model.userModel.JwtRequest;
 import com.java.springboot.EMSbackend.model.userModel.JwtResponse;
 import com.java.springboot.EMSbackend.service.userService.JwtService;
 
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
