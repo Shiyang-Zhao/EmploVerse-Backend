@@ -85,7 +85,7 @@ public class JwtServiceImplementation implements JwtService {
         try {
             UserDetails userDetails = userService.loadUserByUsername(request.getUsernameOrEmail());
             Collection<GrantedAuthority> authorities = new ArrayList<>();
-            for (String role : request.getRoles()) {
+            for (String role : request.getSelectedRoles()) {
                 authorities.add(new SimpleGrantedAuthority(role));
             }
             // Check if all required roles are present in the user's authorities.

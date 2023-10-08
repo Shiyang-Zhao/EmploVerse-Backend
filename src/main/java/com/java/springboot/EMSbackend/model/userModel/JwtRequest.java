@@ -10,16 +10,16 @@ public class JwtRequest implements Serializable {
 
 	private String usernameOrEmail;
 	private String password;
-	private Collection<String> roles;
+	private Collection<String> selectedRoles;
 
 	// default constructor for JSON Parsing
 	public JwtRequest() {
 	}
 
-	public JwtRequest(String usernameOrEmail, String password, Collection<String> roles) {
+	public JwtRequest(String usernameOrEmail, String password, Collection<String> selectedRoles) {
 		this.usernameOrEmail = usernameOrEmail;
 		this.password = password;
-		this.roles = roles;
+		this.selectedRoles = selectedRoles;
 	}
 
 	public String getUsernameOrEmail() {
@@ -30,7 +30,7 @@ public class JwtRequest implements Serializable {
 		return this.password;
 	}
 
-	public Collection<String> getRoles() {
-		return this.roles;
+	public Collection<String> getSelectedRoles() {
+		return this.selectedRoles;
 	}
 }

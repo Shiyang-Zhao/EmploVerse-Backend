@@ -42,7 +42,7 @@ public class AuthController {
             throws Exception {
         String token = jwtService.authenticateUser(request, response);
         return ResponseEntity
-                .ok(new JwtResponse(token, request.getRoles()));
+                .ok(new JwtResponse(token, request.getSelectedRoles()));
     }
 
     @GetMapping("/checkAuth")
