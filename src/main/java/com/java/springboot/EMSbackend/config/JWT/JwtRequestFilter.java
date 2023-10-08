@@ -49,9 +49,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 			}
 		} catch (RuntimeException e) {
 			logger.warn("JWT Token is invalid", e);
-			SecurityContextHolder.clearContext();
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			return;
+			// SecurityContextHolder.clearContext();
+			// response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			// return;
 		}
 		chain.doFilter(request, response);
 	}
