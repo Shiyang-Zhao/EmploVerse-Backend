@@ -34,6 +34,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws ServletException, IOException {
 
+		if (request.getRequestURI().startsWith("/auth/")) {
+			chain.doFilter(request, response);
+			return;
+		}
+
 		final String jwt = jwtTokenUtil.getJwtFromRequest(request);
 		try {
 			if (jwt != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -49,9 +54,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 			}
 		} catch (RuntimeException e) {
 			logger.warn("JWT Token is invalid", e);
-			// SecurityContextHolder.clearContext();
-			// response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			// return;
+			SecurityContextHolder.clearContext();
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return;
 		}
 		chain.doFilter(request, response);
 	}
