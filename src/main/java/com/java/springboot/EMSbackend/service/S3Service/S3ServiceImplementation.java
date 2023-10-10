@@ -33,7 +33,7 @@ public class S3ServiceImplementation implements S3Service {
     @Value("${aws.s3.profileImageFolder}")
     private String profileImageFolder;
 
-    @Value("${aws.s3.defaultImagePath}")
+    @Value("${aws.s3.defaultProfileImagePath}")
     private String defaultImagePath;
 
     private void uploadFile(String keyName, InputStream data) throws Exception {
@@ -79,17 +79,24 @@ public class S3ServiceImplementation implements S3Service {
     }
 
     @Override
-    public String uploadProfileImageToS3(UserDto userDto) {
-        try {
-            String s3Path = getPreUploadS3Path(userDto);
+    public String getFullS3Path(String s3Path) {
+        return baseUrl + "/" + s3Path;
+    }
 
-            try (InputStream inputStream = userDto.getProfileImage().getInputStream()) {
+    @Override
+    public String uploadProfileImageToS3(UserDto userDto, String s3Path) throws Exception {
+        MultipartFile profileImage = userDto.getProfileImage();
+        // Checking if profileImage is valid and not empty
+        if (profileImage != null && !profileImage.isEmpty()) {
+            try (InputStream inputStream = profileImage.getInputStream()) {
                 uploadFile(s3Path, inputStream);
+            } catch (IOException e) {
+                throw new Exception("Failed to retrieve input stream from the profile image.", e);
             }
-            return baseUrl + "/" + s3Path;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to upload profile image to S3", e);
+            return getFullS3Path(s3Path);
         }
+
+        return getFullS3Path(defaultImagePath);
     }
 
 }

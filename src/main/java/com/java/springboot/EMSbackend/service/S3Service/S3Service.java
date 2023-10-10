@@ -6,6 +6,8 @@ public interface S3Service {
 
     String getPreUploadS3Path(UserDto userDto);
 
-    String uploadProfileImageToS3(UserDto userDto) throws Exception;
+    String getFullS3Path(String s3Path);
+
+    String uploadProfileImageToS3(UserDto userDto, String s3Path) throws Exception;
 
 }

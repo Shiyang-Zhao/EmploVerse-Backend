@@ -263,13 +263,13 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 	public void updateCurrentUserProfileIamge(MultipartFile newProfileImage) {
 		try {
 			User user = getCurrentUser();
-
 			if (newProfileImage != null && !newProfileImage.isEmpty()) {
 				// Use the previously defined method to handle the S3 upload
 				UserDto userDto = new UserDto();
 				userDto.setUsername(user.getUsername());
 				userDto.setProfileImage(newProfileImage);
-				String newProfileImagePath = s3Service.uploadProfileImageToS3(userDto);
+				final String s3Path = s3Service.getPreUploadS3Path(userDto);
+				String newProfileImagePath = s3Service.uploadProfileImageToS3(userDto, s3Path);
 
 				// Update the user's profile image in the database
 				user.setProfileImage(newProfileImagePath);

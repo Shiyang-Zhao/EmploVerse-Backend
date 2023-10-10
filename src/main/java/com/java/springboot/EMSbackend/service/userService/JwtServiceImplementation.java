@@ -71,18 +71,18 @@ public class JwtServiceImplementation implements JwtService {
                 || !userDto.getPassword1().equals(userDto.getPassword2())) {
             throw new IllegalArgumentException("Passwords do not match or are null");
         }
-        final String profileImagePath = s3Service.getPreUploadS3Path(userDto);
+        final String s3Path = s3Service.getPreUploadS3Path(userDto);
+        String fullS3Path = s3Service.getFullS3Path(s3Path);
 
         User newUser = new User(userDto.getFirstName(), userDto.getLastName(),
                 userDto.getUsername(), userDto.getEmail(),
                 passwordEncoder.encode(userDto.getPassword1()),
-                userDto.getPhoneNumber(), profileImagePath, userDto.getRoles());
+                userDto.getPhoneNumber(), fullS3Path, userDto.getRoles());
         // Ensuring transactionality using @Transactional or other transaction
         // management approaches.
         try {
             userRepository.save(newUser);
-            s3Service.uploadProfileImageToS3(userDto);
-
+            s3Service.uploadProfileImageToS3(userDto, s3Path);
             return newUser;
         } catch (Exception e) {
             throw new Exception("Failed to register the user", e);
