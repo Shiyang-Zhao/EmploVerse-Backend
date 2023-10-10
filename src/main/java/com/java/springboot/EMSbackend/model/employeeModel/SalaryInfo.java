@@ -23,35 +23,35 @@ public class SalaryInfo {
     @Column(name = "id", updatable = false)
     private Long id;
 
-    @NotNull
+    //@notnull
     @Column(name = "amount")
     private BigDecimal amount; // Assuming salary is a numerical value represented as a BigDecimal.
 
-    @NotNull
+    //@notnull
     @Column(name = "pay_frequency")
     private String payFrequency; // Monthly, bi-weekly, etc.
 
-    @NotNull
+    //@notnull
     @Column(name = "bonus")
     private BigDecimal bonus; // Any bonus amount associated with the salary.
 
-    @NotNull
+    //@notnull
     @Column(name = "tax_deduction")
     private BigDecimal taxDeduction; // The amount deducted as taxes from the salary.
 
-    @NotNull
+    //@notnull
     @Column(name = "overtime_hours")
     private Double overtimeHours; // Number of overtime hours worked.
 
-    @NotNull
+    //@notnull
     @Column(name = "overtime_rate")
     private Double overtimeRate; // Rate of pay for overtime hours.
 
-    @NotNull
+    //@notnull
     @Column(name = "deductions")
     private String deductions; // Any additional deductions made from the salary.
 
-    @NotNull
+    //@notnull
     @Column(name = "insurance_coverage")
     private String insuranceCoverage; // Details of insurance coverage provided by the employer.
 

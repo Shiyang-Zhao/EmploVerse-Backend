@@ -22,19 +22,19 @@ public class EducationInfo {
     private Long id;
 
     // Education information
-    @NotNull
+    //@notnull
     @Column(name = "university")
     private String university;
 
-    @NotNull
+    //@notnull
     @Column(name = "degree")
     private String degree;
 
-    @NotNull
+    //@notnull
     @Column(name = "major")
     private String major;
 
-    @NotNull
+    //@notnull
     @Column(name = "gpa")
     private String gpa;
 

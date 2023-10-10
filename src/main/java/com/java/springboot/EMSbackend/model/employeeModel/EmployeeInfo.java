@@ -23,39 +23,39 @@ public class EmployeeInfo {
     @Column(name = "id", updatable = false)
     private Long id;
 
-    @NotNull
+    //@notnull
     @Column(name = "start_date")
     private LocalDate startDate;
 
-    @NotNull
+    //@notnull
     @Column(name = "end_date")
     private LocalDate endDate;
 
-    @NotNull
+    //@notnull
     @Column(name = "employment_type")
     private String employmentType;
 
-    @NotNull
+    //@notnull
     @Column(name = "department")
     private String department;
 
-    @NotNull
+    //@notnull
     @Column(name = "manager")
     private String manager;
 
-    @NotNull
+    //@notnull
     @Column(name = "job_titles")
     private String jobTitles;
 
-    @NotNull
+    //@notnull
     @Column(name = "work_location")
     private String workLocation;
 
-    @NotNull
+    //@notnull
     @Column(name = "work_schedule")
     private String workSchedule;
 
-    @NotNull
+    //@notnull
     @Column(name = "status")
     private String status;
 

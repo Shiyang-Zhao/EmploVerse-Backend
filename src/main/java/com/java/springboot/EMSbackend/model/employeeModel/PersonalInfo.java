@@ -25,45 +25,45 @@ public class PersonalInfo {
     private Long id;
 
     // Personal information
-    @NotNull
+    //@notnull
     @Column(name = "gender")
     private String gender;
 
-    @NotNull
+    //@notnull
     @Column(name = "birthday")
     private LocalDate birthday;
 
-    @NotNull
+    //@notnull
     @Column(name = "citizenship")
     private String citizenship;
 
-    @NotNull
+    //@notnull
     @Pattern(regexp = "^[0-9]{3}-[0-9]{2}-[0-9]{4}$")
     @Column(name = "ssn")
     private String ssn;
 
-    @NotNull
+    //@notnull
     @Column(name = "address1")
     private String address1;
 
-    @NotNull
+    //@notnull
     @Column(name = "address2")
     private String address2;
 
-    @NotNull
+    //@notnull
     @Column(name = "city")
     private String city;
 
-    @NotNull
+    //@notnull
     @Column(name = "state")
     private String state;
 
-    @NotNull
+    //@notnull
     @Pattern(regexp = "^\\d{5}(?:-\\d{4})?$")
     @Column(name = "zip_code")
     private String zipCode;
 
-    @NotNull
+    //@notnull
     @Column(name = "country")
     private String country;
 
