@@ -11,7 +11,7 @@ import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.stereotype.Component;
 
-import com.java.springboot.EMSbackend.model.userModel.JwtTokenUtil;
+import com.java.springboot.EMSbackend.config.JWT.JwtTokenUtil;
 
 @Component
 public class WebSocketChannelInterceptor implements ChannelInterceptor {

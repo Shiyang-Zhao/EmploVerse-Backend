@@ -1,4 +1,4 @@
-package com.java.springboot.EMSbackend.model.userModel;
+package com.java.springboot.EMSbackend.config.JWT;
 
 import java.io.Serializable;
 import java.util.Collection;

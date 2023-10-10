@@ -1,22 +1,20 @@
 package com.java.springboot.EMSbackend.model.chatModel;
 
-import java.time.LocalDateTime;
-
 import com.java.springboot.EMSbackend.model.userModel.User;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Getter
 @Setter
-@AllArgsConstructor
 @Entity
+@Table(name = "chat_message")
 public class ChatMessage {
 
     @Id
@@ -26,9 +24,26 @@ public class ChatMessage {
     @ManyToOne
     private User sender;
 
+    @NotNull
+    @Size(max = 500)
     private String content;
 
+    @NotNull
     private LocalDateTime timestamp;
 
-    // Getters and setters
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "chat_id")
+    private ChatRoom chatRoom;
+
+    @Enumerated(EnumType.STRING)
+    private MessageStatus status;
+
+    private LocalDateTime lastEditedTimestamp;
+}
+
+enum MessageStatus {
+    SENT,
+    DELIVERED,
+    READ
 }

@@ -4,6 +4,8 @@ import com.java.springboot.EMSbackend.dto.UserDto.UserDto;
 
 public interface S3Service {
 
+    String getPreUploadS3Path(UserDto userDto);
+
     String uploadProfileImageToS3(UserDto userDto) throws Exception;
 
 }

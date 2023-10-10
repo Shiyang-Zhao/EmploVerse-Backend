@@ -11,7 +11,11 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.UUID;
 
 @Service
@@ -23,11 +27,14 @@ public class S3ServiceImplementation implements S3Service {
     @Value("${aws.s3.bucketName}")
     private String bucketName;
 
-    @Value("${empverse.baseImagePath}")
-    private String baseProfileImagePath;
+    @Value("${aws.s3.baseUrl}")
+    private String baseUrl;
 
-    @Value("${empverse.defaultImagePath}")
-    private String defaultProfileImagePath;
+    @Value("${aws.s3.profileImageFolder}")
+    private String profileImageFolder;
+
+    @Value("${aws.s3.defaultImagePath}")
+    private String defaultImagePath;
 
     private void uploadFile(String keyName, InputStream data) throws Exception {
         s3Client.putObject(
@@ -35,24 +42,51 @@ public class S3ServiceImplementation implements S3Service {
                 RequestBody.fromInputStream(data, data.available()));
     }
 
+    private String generateFilename(UserDto userDto, MultipartFile file) {
+        try {
+            // Hashing the file content
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] bytes = file.getBytes();
+            digest.update(bytes);
+            byte[] hashBytes = digest.digest();
+            String fileHash = Base64.getEncoder().encodeToString(hashBytes).replaceAll("[/+=]", "_");
+
+            // Generating a UUID
+            String uniqueID = UUID.randomUUID().toString();
+
+            // Getting file extension
+            String originalFilename = file.getOriginalFilename();
+            String fileExtension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+
+            // Creating a filename with username, hash, and UUID
+            String filename = userDto.getUsername() + "-" + fileHash + "-" + uniqueID + "." + fileExtension;
+
+            return filename;
+        } catch (IOException | NoSuchAlgorithmException e) {
+            // Handle exceptions (maybe log an error message or throw a custom exception)
+            throw new RuntimeException("Error generating filename", e);
+        }
+    }
+
+    @Override
+    public String getPreUploadS3Path(UserDto userDto) {
+        MultipartFile profileImage = userDto.getProfileImage();
+        if (profileImage == null || profileImage.isEmpty()) {
+            return defaultImagePath;
+        }
+        String filename = generateFilename(userDto, profileImage);
+        return profileImageFolder + "/" + userDto.getUsername() + "/" + filename;
+    }
+
     @Override
     public String uploadProfileImageToS3(UserDto userDto) {
         try {
-            MultipartFile profileImage = userDto.getProfileImage();
+            String s3Path = getPreUploadS3Path(userDto);
 
-            if (profileImage == null || profileImage.isEmpty()) {
-                return defaultProfileImagePath;
-            }
-
-            String originalFilename = profileImage.getOriginalFilename();
-            String fileExtension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
-            String filename = UUID.randomUUID().toString() + "." + fileExtension;
-            String s3Path = userDto.getUsername() + "/" + filename;
-
-            try (InputStream inputStream = profileImage.getInputStream()) {
+            try (InputStream inputStream = userDto.getProfileImage().getInputStream()) {
                 uploadFile(s3Path, inputStream);
             }
-            return baseProfileImagePath + s3Path;
+            return baseUrl + "/" + s3Path;
         } catch (Exception e) {
             throw new RuntimeException("Failed to upload profile image to S3", e);
         }

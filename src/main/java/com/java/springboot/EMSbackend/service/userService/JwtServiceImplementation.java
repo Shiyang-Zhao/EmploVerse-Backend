@@ -20,9 +20,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.java.springboot.EMSbackend.config.JWT.JwtTokenUtil;
 import com.java.springboot.EMSbackend.dto.UserDto.UserDto;
 import com.java.springboot.EMSbackend.model.userModel.JwtRequest;
-import com.java.springboot.EMSbackend.model.userModel.JwtTokenUtil;
 import com.java.springboot.EMSbackend.model.userModel.User;
 import com.java.springboot.EMSbackend.repository.EmployeeRepository;
 import com.java.springboot.EMSbackend.repository.UserRepository;
@@ -71,12 +71,23 @@ public class JwtServiceImplementation implements JwtService {
                 || !userDto.getPassword1().equals(userDto.getPassword2())) {
             throw new IllegalArgumentException("Passwords do not match or are null");
         }
-        String profileImagePath = s3Service.uploadProfileImageToS3(userDto);
-        User newUser = new User(userDto.getFirstName(), userDto.getLastName(), userDto.getUsername(),
-                userDto.getEmail(), passwordEncoder.encode(userDto.getPassword1()),
+        final String profileImagePath = s3Service.getPreUploadS3Path(userDto);
+
+        User newUser = new User(userDto.getFirstName(), userDto.getLastName(),
+                userDto.getUsername(), userDto.getEmail(),
+                passwordEncoder.encode(userDto.getPassword1()),
                 userDto.getPhoneNumber(), profileImagePath, userDto.getRoles());
-        userRepository.save(newUser);
-        return newUser;
+        // Ensuring transactionality using @Transactional or other transaction
+        // management approaches.
+        try {
+            userRepository.save(newUser);
+            s3Service.uploadProfileImageToS3(userDto);
+
+            return newUser;
+        } catch (Exception e) {
+            throw new Exception("Failed to register the user", e);
+        }
+
     }
 
     @Override
