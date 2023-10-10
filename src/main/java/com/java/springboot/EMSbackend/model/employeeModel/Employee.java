@@ -30,27 +30,27 @@ public class Employee {
 	@Column(name = "id", updatable = false)
 	private long id;
 
-	//@notnull
+	@NotNull
 	@OneToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "user_id", referencedColumnName = "id")
 	private User user;
 
-	//@notnull
+	@NotNull
 	@OneToOne(cascade = CascadeType.ALL, optional = false)
 	@JoinColumn(name = "personalInfo_id", referencedColumnName = "id")
 	private PersonalInfo personalInfo;
 
-	//@notnull
+	@NotNull
 	@OneToOne(cascade = CascadeType.ALL, optional = false)
 	@JoinColumn(name = "employeeInfo_id", referencedColumnName = "id")
 	private EmployeeInfo employeeInfo;
 
-	//@notnull
+	@NotNull
 	@OneToOne(cascade = CascadeType.ALL, optional = false)
 	@JoinColumn(name = "educationInfo_id", referencedColumnName = "id")
 	private EducationInfo educationInfo;
 
-	//@notnull
+	@NotNull
 	@OneToOne(cascade = CascadeType.ALL, optional = false)
 	@JoinColumn(name = "salaryInfo_id", referencedColumnName = "id")
 	private SalaryInfo salaryInfo;
