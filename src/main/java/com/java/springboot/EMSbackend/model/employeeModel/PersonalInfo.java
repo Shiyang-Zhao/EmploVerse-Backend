@@ -8,7 +8,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,7 +37,7 @@ public class PersonalInfo {
     private String citizenship;
 
     //@notnull
-    @Pattern(regexp = "^[0-9]{3}-[0-9]{2}-[0-9]{4}$")
+    // @Pattern(regexp = "^[0-9]{3}-[0-9]{2}-[0-9]{4}$")
     @Column(name = "ssn")
     private String ssn;
 
@@ -59,7 +58,7 @@ public class PersonalInfo {
     private String state;
 
     //@notnull
-    @Pattern(regexp = "^\\d{5}(?:-\\d{4})?$")
+    // @Pattern(regexp = "^\\d{5}(?:-\\d{4})?$")
     @Column(name = "zip_code")
     private String zipCode;
 

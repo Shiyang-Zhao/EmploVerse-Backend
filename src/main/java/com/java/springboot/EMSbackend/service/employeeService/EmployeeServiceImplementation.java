@@ -41,8 +41,7 @@ public class EmployeeServiceImplementation implements EmployeeService {
 	@Override
 	public void createEmployee(EmployeeDto employeeDto) {
 		try {
-			Employee newEmployee = new Employee(employeeDto.getUser(), employeeDto.getPersonalInfo(),
-					employeeDto.getEmployeeInfo(), employeeDto.getEducationInfo(), employeeDto.getSalaryInfo());
+			Employee newEmployee = new Employee(employeeDto.getUser());
 			employeeRepository.save(newEmployee);
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to save employee: " + e.getMessage());
